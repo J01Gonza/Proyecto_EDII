@@ -74,17 +74,7 @@ namespace DLL
             {
                 pKey[i] = R[EP[i] - 1];
             }
-            for (int i = 0; i < k1.Length; i++)
-            {
-                if (pKey[i] == k1[i])
-                {
-                    pKey[i] = '0';
-                }
-                else
-                {
-                    pKey[i] = '1';
-                }
-            }
+            pKey = XOR(pKey, k1);
             l = pKey.Take((pKey.Length + 1) / 2).ToArray();
             r = pKey.Skip((pKey.Length + 1) / 2).ToArray();
             s = (S0[Convert.ToInt32(l[0].ToString() + l[3].ToString(), 2), Convert.ToInt32(l[1].ToString() + l[2].ToString(), 2)] + S1[Convert.ToInt32(r[0].ToString() + r[3].ToString(), 2), Convert.ToInt32(r[1].ToString() + r[2].ToString(), 2)]).ToArray();
@@ -92,17 +82,7 @@ namespace DLL
             {
                 p4[i] = s[P4[i] - 1];
             }
-            for (int i = 0; i < L.Length; i++)
-            {
-                if (p4[i] == L[i])
-                {
-                    p4[i] = '0';
-                }
-                else
-                {
-                    p4[i] = '1';
-                }
-            }
+            p4 = XOR(p4, L);
             pKey = R.Concat(p4).ToArray();
             L = pKey.Take((pKey.Length + 1) / 2).ToArray();
             R = pKey.Skip((pKey.Length + 1) / 2).ToArray();
@@ -110,17 +90,7 @@ namespace DLL
             {
                 pKey[i] = R[EP[i] - 1];
             }
-            for (int i = 0; i < k2.Length; i++)
-            {
-                if (pKey[i] == k2[i])
-                {
-                    pKey[i] = '0';
-                }
-                else
-                {
-                    pKey[i] = '1';
-                }
-            }
+            pKey = XOR(pKey, k2);
             l = pKey.Take((pKey.Length + 1) / 2).ToArray();
             r = pKey.Skip((pKey.Length + 1) / 2).ToArray();
             s = (S0[Convert.ToInt32(l[0].ToString() + l[3].ToString(), 2), Convert.ToInt32(l[1].ToString() + l[2].ToString(), 2)] + S1[Convert.ToInt32(r[0].ToString() + r[3].ToString(), 2), Convert.ToInt32(r[1].ToString() + r[2].ToString(), 2)]).ToArray();
@@ -128,17 +98,7 @@ namespace DLL
             {
                 p4[i] = s[P4[i] - 1];
             }
-            for (int i = 0; i < L.Length; i++)
-            {
-                if (p4[i] == L[i])
-                {
-                    p4[i] = '0';
-                }
-                else
-                {
-                    p4[i] = '1';
-                }
-            }
+            p4 = XOR(p4, L);
             pKey = p4.Concat(R).ToArray();
             for (int i = 0; i < IP1.Length; i++)
             {
@@ -160,6 +120,24 @@ namespace DLL
                 shift[i] = array[(i + 1) % size];
             }
             return shift;
+        }
+
+        static char[] XOR(char[] array1, char[] array2)
+        {
+            int size = array1.Length;
+            char[] xor = new char[size];
+            for (int i = 0; i < size; i++)
+            {
+                if (array1[i] == array2[i])
+                {
+                    xor[i] = '0';
+                }
+                else
+                {
+                    xor[i] = '1';
+                }
+            }
+            return xor;
         }
     }
 }
