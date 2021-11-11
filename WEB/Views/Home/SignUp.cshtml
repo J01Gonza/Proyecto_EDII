@@ -4,7 +4,10 @@
 }
 
 <h1>Sign Up</h1>
-
+<div class="text-center">
+    <p style="font-size:larger; color:red">@ViewData["Error"]</p>
+    <p style="font-size:larger; color:yellowgreen">@ViewData["Success"]</p>
+</div>
 <div class="row">
     <div class="col-4">
         <form asp-action="SignUp">
@@ -26,7 +29,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
+                <input type = "password" asp-for="Password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group">

@@ -9,8 +9,8 @@ namespace WEB.Models
 {
     public class Mensajes
     {
-        string Emisor;
-        string contenido;
-        IFormFile Adjunto;
+        public string Content { get; set; }
+        public string Sender { get; set; }
+        IFormFile File { get; set; }
     }
 }
