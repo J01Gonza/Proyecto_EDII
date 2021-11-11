@@ -7,13 +7,13 @@ using System.Numerics;
 
 namespace DLL
 {
-    public interface CYPHER
+    public interface RSA
     {
         List<byte> Cipher(byte[] code, int key, int key2);
         List<byte> Decipher(byte[] allbytes, int key, int key2);
     }
 
-    public class RSA : CYPHER
+    public class rsa : RSA
     {
         public List<byte> Cipher(byte[] code, int n, int k)
         {

@@ -14,7 +14,7 @@ namespace DLL
         int pNumber();
     }
 
-    public class ImplementationClassD : DiffieHellman
+    public class diffiehellman : DiffieHellman
     {
         public int secretKey(int key, int g, int p)
         {
