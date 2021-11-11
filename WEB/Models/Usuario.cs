@@ -20,7 +20,7 @@ namespace WEB.Models
         [Display(Name = "Contraseña")]
         [Required]
         public string Password { get; set; }
-        public List<string> Messages { get; set; }
+        public List<string> Chats { get; set; }
         public List<string> Contacts { get; set; }
         public int Key { get; set; }
     }

@@ -29,7 +29,7 @@ namespace WEB.Conexiones
         {
             if(Id != null)
             {
-                return (Usuario)Collection.Find(x => x.user.Equals(Id));
+                return (Usuario)Collection.Find(x => x.User.Equals(Id));
             }
             return null;
         }
@@ -40,7 +40,6 @@ namespace WEB.Conexiones
             {
                 Collection.InsertOneAsync(usuario);
             }
-            throw new Exception("Empty user");
         }
 
         public void UpdateUser(Usuario usuario)

@@ -4,11 +4,14 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using WEB.Models;
+using WEB.Conexiones;
+using System.Collections.Generic;
 
 namespace WEB.Controllers
 {
     public class HomeController : Controller
     {
+        private IUsersCollection DB = new UsersCollection();
         private readonly ILogger<HomeController> _logger;
         const string SessionUser = "_User";
 
@@ -43,6 +46,17 @@ namespace WEB.Controllers
         {
             try
             {
+                //descifrar contraseña antes de hacer esto
+                Usuario Ingreso = DB.AllUsers().Find(x => x.User.Equals(collection["user"]) && x.Password.Equals(""));
+                if (Ingreso != null)
+                {
+                    HttpContext.Session.SetString(SessionUser, Ingreso.User);
+                    return RedirectToAction(nameof(Home));
+                }
+                else
+                {
+
+                }
                 return View();
             }
             catch (Exception)
@@ -59,20 +73,35 @@ namespace WEB.Controllers
         {
             try
             {
-                var newUser = new Usuario
+
+                var newUser = new Usuario()
                 {
+                    User = collection["User"],
+                    //CIFRAR CONTRASEÑA
+                    Password = collection["Password"],
                     Name = collection["Name"],
                     LName = collection["LName"],
-                    User = collection["User"],
-                    Password = collection["Password"]
+                    Contacts = new List<string>(),
+                    Chats = new List<string>(),
+                    Key = collection["Name"].GetHashCode()
                 };
-                HttpContext.Session.SetString(SessionUser, newUser.User);
-                return RedirectToAction(nameof(Index));
+                    DB.NewUser(newUser);
+                    ViewData["Success"] = "Usuario creado correctamente :)";
+                    return View();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                string error = e.Message;
+                ViewData["Error"] = "Ingrese correctamente los datos, por favor";
                 return View();
             }
+        }
+
+        public IActionResult Home() { return View(); }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Home(IFormCollection collection) { 
+            return View(); 
         }
     }
 }

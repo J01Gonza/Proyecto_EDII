@@ -13,6 +13,7 @@ namespace WEB.Conexiones
         public mongoConnection()
         {
             Client = new MongoClient("mongodb://localhost:27017");
+            DB = Client.GetDatabase("TeyvatExpress");
         }
     }
 }
