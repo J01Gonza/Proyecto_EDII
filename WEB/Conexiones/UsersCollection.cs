@@ -20,9 +20,16 @@ namespace WEB.Conexiones
 
         public List<Usuario> AllUsers()
         {
-            var query = Collection.
-                Find(new BsonDocument()).ToListAsync();
-            return query.Result;
+            try
+            {
+                var query = Collection.
+                    Find(new BsonDocument()).ToListAsync();
+                return query.Result;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public Usuario GetbyUser(string Id)
@@ -36,15 +43,21 @@ namespace WEB.Conexiones
 
         public void NewUser(Usuario usuario)
         {
-            if(usuario != null)
+            if(usuario != null && AllUsers().Find(x => x.User.Equals(usuario.User)) == null)
             {
                 Collection.InsertOneAsync(usuario);
+            }
+            else
+            {
+                throw new Exception("Usuario ya ingresado");
             }
         }
 
         public void UpdateUser(Usuario usuario)
         {
-           
+            var filter = Builders<Usuario>.Filter.Eq(x => x.ID, usuario.ID);
+            Collection.ReplaceOneAsync(filter, usuario);
+
         }
     }
 }

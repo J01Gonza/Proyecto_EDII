@@ -12,7 +12,7 @@ namespace WEB.Conexiones
         public IMongoDatabase DB;
         public mongoConnection()
         {
-            Client = new MongoClient("mongodb://localhost:27017");
+            Client = new MongoClient("mongodb://127.0.0.1:27017");
             DB = Client.GetDatabase("TeyvatExpress");
         }
     }

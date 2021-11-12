@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
 
 namespace WEB.Models
 {
     public class Usuario
     {
+        [BsonId]
+        public ObjectId ID { get; set; }
         [Display (Name = "Usuario")]
         [Required]
         public string User { get; set; }
@@ -20,8 +24,8 @@ namespace WEB.Models
         [Display(Name = "Contraseña")]
         [Required]
         public string Password { get; set; }
-        public List<string> Chats { get; set; }
-        public List<string> Contacts { get; set; }
+        public List<Chats> Chats { get; set; }
+        public List<Contacto> Contacts { get; set; }
         public int Key { get; set; }
     }
 }

@@ -1,0 +1,46 @@
+﻿@model IEnumerable<WEB.Models.Contacto>
+
+@{
+    ViewData["Title"] = "Contactos";
+}
+
+<h1>Solicitudes de amistad recibidas</h1>
+
+<div class="text-center">
+    <p style="font-size:larger; color:yellowgreen">@ViewData["Success"]</p>
+</div>
+@if (!Model.Any())
+{
+    <h3 class="text-center">No tienes ninguna solicitud de amistad<br /> Regresa pronto o <a asp-action="AddFriend">Agrega a tus amigos</a> con su nombre de usuario</h3>
+}
+else
+{
+<pre class="text-center" style="font-size:medium">
+<a asp-action="SentRequests">Solicitudes enviadas</a>       <a asp-action="Requests">Nuevas solicitudes</a>
+</pre>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.UserContact)
+                </th>
+                <th>
+                    Estado de solicitud
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserContact)
+                    </td>
+                    <td>
+                        <pre>@Html.ActionLink("Aceptar", "AcceptRequests", new { id = item.UserContact, sent = false })  |  @Html.ActionLink("Eliminar", "DeleteRequests", new { id = item.UserContact })</pre>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
