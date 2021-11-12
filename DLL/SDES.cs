@@ -12,7 +12,7 @@ namespace DLL
         byte Enconde(string mainKey, string key1, string key2, int[] P4, int[] EP, int[] IP, int[] IP1);
     }
 
-    public class ImplementationClass : SDES
+    public class sdes : SDES
     {
         public (string key1, string key2) generateKey(string mainKey, int[] P10, int[] P8)
         {

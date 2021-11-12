@@ -11,7 +11,7 @@ namespace DLL
         public byte[] Compress(byte[] bytes);
         public byte[] Decompress(byte[] bytes);
     }
-    public class ImplementationClassL : ILZW
+    public class lzw : ILZW
     {
         public byte[] Compress(byte[] bytes)
         {
