@@ -9,8 +9,4 @@
     <PackageReference Include="MongoDB.Driver" Version="2.13.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Views\Usuario\" />
-  </ItemGroup>
-
 </Project>

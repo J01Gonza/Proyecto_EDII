@@ -1,3 +1,16 @@
 ﻿@{
-    Layout = "_Layout";
+    string CurrentName = Convert.ToString(Context.Request.RouteValues["Controller"]);
+    switch (CurrentName)
+    {
+        case "User":
+            byte[] viewbag;
+            ViewContext.HttpContext.Session.TryGetValue("_User", out viewbag);
+            ViewBag.Session = new string(System.Text.Encoding.UTF8.GetString(viewbag).ToCharArray());
+            Layout = "~/Views/Shared/_LayoutUser.cshtml";
+            break;
+        default:
+            //Admin layout
+            Layout = "~/Views/Shared/_Layout.cshtml";
+            break;
+    }
 }
