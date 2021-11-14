@@ -121,6 +121,15 @@ namespace WEB.Controllers
             }
         }
 
-
+        public IActionResult Chat()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Chat()
+        {
+            return View();
+        }
     }
 }
