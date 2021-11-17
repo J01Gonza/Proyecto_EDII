@@ -27,9 +27,7 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Requests">Solicitudes de amistad</a>
                         </li>
-                        <li class="nav-item">
-                            <label>User: </label>  @ViewBag.Session
-                        </li>
+                        <li class="nav-item" value = @ViewData["Usuario"]></li>
                     </ul>
                 </div>
             </div>

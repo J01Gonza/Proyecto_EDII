@@ -11,6 +11,6 @@ namespace WEB.Models
     {
         public string Content { get; set; }
         public string Sender { get; set; }
-        IFormFile File { get; set; }
+        public IFormFile File { get; set; }
     }
 }

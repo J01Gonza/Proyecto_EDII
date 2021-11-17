@@ -1,0 +1,58 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model WEB.Models.Chats
+@{
+    ViewData["Title"] = "Chat";
+}
+@foreach (var i in Model.usuarios)
+{
+    ViewData["user"] += i;
+    if (i != Model.usuarios.Last())
+    {
+        ViewData["user"] += ", ";
+    }
+}
+<h2 name="user">Chat con @ViewData["users"]</h2>
+<div class="container">
+    <form asp-action="Chat">
+        <div class="d-inline-flex justify-content-between collapse">
+            <div class="col-2">
+                <input type="submit" name="File" value="Adjuntar archivos" class="btn btn-primary" />
+            </div>
+            <div class="col-2">
+                <input type="submit" value="Enviar mensaje" class="btn btn-primary" />
+            </div>
+            <div class="col-8">
+                <input type="text" name="Contenido" class="form-control" />
+            </div>
+        </div>
+    </form>
+    @if (Model.mensajes.Any())
+    {
+        <table class="table">
+            <tbody>
+                @foreach (var item in Model.mensajes)
+                {
+                    <tr>
+                        <td>
+                            <b>@item.Sender:</b>
+                            <br /> @item.Content
+                        </td>
+                        <td>
+                            @Html.ActionLink("Borrar para todos", "Delete") | @Html.ActionLink("Borrar para mí", "Delete")
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+
+        <br /> <br />
+        <h3 style="opacity: 0.4"> Inicia una conversación con @ViewData["users"]</h3>
+    }
+</div>

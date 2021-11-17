@@ -35,7 +35,7 @@ else
                         @Html.DisplayFor(modelItem => item.UserContact)
                     </td>
                     <td>
-                        @Html.ActionLink("Abrir Chat", "Chat", new { id = item.UserContact })
+                        @Html.ActionLink("Abrir Chat", "Chat", new { id = item.UserContact, group = false })
                     </td>
                 </tr>
             }
