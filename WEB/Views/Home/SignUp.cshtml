@@ -1,9 +1,11 @@
 ﻿@model WEB.Models.Usuario
+
 @{
-    ViewData["Title"] = "SignUp";
+    ViewData["Title"] = "Crear una cuenta";
 }
 
-<h1>Sign Up</h1>
+<h1>Crear una cuenta</h1>
+
 <div class="text-center">
     <p style="font-size:larger; color:red">@ViewData["Error"]</p>
     <p style="font-size:larger; color:yellowgreen">@ViewData["Success"]</p>
@@ -33,7 +35,7 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Sign Up" class="btn btn-primary" />
+                <input type="submit" value="Siguiente" class="btn btn-primary" />
             </div>
         </form>
     </div>

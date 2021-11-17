@@ -1,20 +1,20 @@
 ﻿@model IEnumerable<WEB.Models.Contacto>
 
 @{
-    ViewData["Title"] = "Contactos";
+    ViewData["Title"] = "Solicitudes Enviadas";
 }
 
-<h1>Solicitudes de amistad enviadas</h1>
+<h1>Solicitudes Enviadas</h1>
 
 
 @if (!Model.Any())
 {
-    <h3 class="text-center">No has enviado ninguna solicitud por el momento.<br /> <a asp-action="AddFriend">Agrega a tus amigos</a> con su nombre de usuario</h3>
+    <h3 class="text-center">No has enviado ninguna solicitud por el momento.<br /> <a asp-action="AddFriend">Agrega a otro viajero</a> con su nombre de usuario</h3>
 }
 else
 {
 <pre class="text-center" style="font-size:medium">
-<a asp-action="SentRequests">Solicitudes enviadas</a>       <a asp-action="Requests">Nuevas solicitudes</a>
+<a asp-action="SentRequests">Solicitudes Enviadas</a>       <a asp-action="Requests">Solicitudes Recibidas</a>
 </pre>
     <table class="table">
         <thead>

@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<WEB.Models.Chats>
 
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Chats";
 }
 
 <h1>Chats</h1>
@@ -9,7 +9,7 @@
 <div class="text-center">
     @if (!Model.Any())
     {
-        <h3 >No tienes ningún chat activo.<br>Inicia una conversación con tus <a asp-action="Contacts">contactos</a> o <a asp-action="AddFriend">agrega nuevos amigos</a></h3>
+        <h3>No tienes ningún chat activo.<br>Inicia una conversación con otro <a asp-action="Contacts">viajero</a> o <a asp-action="AddFriend">agrega nuevos viajeros</a></h3>
     }
     else
     {
