@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WEB.Models.Contacto>
+﻿@model IEnumerable<WEB.Models.Contact>
 
 @{
     ViewData["Title"] = "Contactos";
@@ -20,7 +20,7 @@ else
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.UserContact)
+                    @Html.DisplayNameFor(model => model.userContact)
                 </th>
                 <th>
                     Eliminar Solicitud
@@ -32,10 +32,10 @@ else
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.UserContact)
+                        @Html.DisplayFor(modelItem => item.userContact)
                     </td>
                     <td>
-                        @Html.ActionLink("Eliminar", "DeleteRequest", new { id = item.UserContact, sent = true });
+                        @Html.ActionLink("Eliminar", "DeleteRequest", new { id = item.userContact, sent = true });
                     </td>
                 </tr>
             }

@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using API.Conexiones;
-using API.Models;
+using API1.Conexiones;
+using API1.Models;
 
-namespace API.Controllers
+namespace API1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -20,7 +20,13 @@ namespace API.Controllers
         {
             return Ok(await db.AllUsers());
         }
-        
+        [HttpGet]
+        [Route("UserbyUN/{username}")]
+        public async Task<IActionResult> UserbyName(string username)
+        {
+            return Ok(await db.UserbyName(username));
+        }
+
         [HttpPost]
         [Route("SignUp")]
         public async Task<IActionResult> NewUser([FromBody] User newuser)
@@ -29,7 +35,7 @@ namespace API.Controllers
             {
                 return BadRequest();
             }
-            else if(newuser.userName == string.Empty)
+            else if(newuser.userName == null)
             {
                 ModelState.AddModelError("Nombre de usuario", "Nombre de usuario no encontrado");
             }
@@ -49,7 +55,7 @@ namespace API.Controllers
             {
                 ModelState.AddModelError("Nombre de usuario", "Nombre de usuario no encontrado");
             }
-            newuser.ID = new MongoDB.Bson.ObjectId(id);
+            newuser.id = new MongoDB.Bson.ObjectId(id);
             await db.UpdateUser(newuser);
             return Created("Created", newuser);
         }

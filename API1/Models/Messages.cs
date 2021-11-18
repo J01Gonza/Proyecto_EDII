@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace API.Models
+namespace API1.Models
 {
     public class Messages
     {
-        public string Content { get; set; }
-        public string Sender { get; set; }
-        IFormFile File { get; set; }
+        public string content { get; set; }
+        public string sender { get; set; }
+        public IFormFile file { get; set; }
     }
 }

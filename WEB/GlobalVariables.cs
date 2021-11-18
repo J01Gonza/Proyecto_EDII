@@ -9,12 +9,9 @@ namespace WEB
     public class GlobalVariables
     {
         public static HttpClient webClient = new HttpClient();
-        GlobalVariables()
+        static GlobalVariables()
         {
-            webClient.BaseAddress = new Uri("http://localhost:12455/api");
-            webClient.DefaultRequestHeaders.Clear();
-            webClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-
+            webClient.BaseAddress = new Uri("http://localhost:47391/api/");
         }
     }
 }
