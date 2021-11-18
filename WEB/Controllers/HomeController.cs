@@ -45,7 +45,7 @@ namespace WEB.Controllers
             try
             {
                 //descifrar contraseña antes de hacer esto
-                Usuario Ingreso = DB.AllUsers().Find(x => x.User.Equals(collection["User"]) && x.Password.Equals(collection["Password"]));
+                User Ingreso = DB.AllUsers().Find(x => x.User.Equals(collection["User"]) && x.Password.Equals(collection["Password"]));
                 if (Ingreso != null)
                 {
                     HttpContext.Session.SetString(SessionUser, Ingreso.User);
@@ -72,14 +72,14 @@ namespace WEB.Controllers
         {
             try
             {
-                var newUser = new Usuario()
+                var newUser = new User()
                 {
                     User = collection["User"],
                     //CIFRAR CONTRASEÑA
                     Password = collection["Password"],
                     Name = collection["Name"],
                     LName = collection["LName"],
-                    Contacts = new List<Contacto>(),
+                    Contacts = new List<Contact>(),
                     Chats = new List<Chats>(),
                     Key = collection["Name"].GetHashCode()
                 };

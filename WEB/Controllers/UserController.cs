@@ -24,7 +24,7 @@ namespace WEB.Controllers
         public IActionResult Contacts()
         {
             string usuario = HttpContext.Session.GetString(SessionUser);
-            List<Contacto> contacto = DB.AllUsers().Find(x => x.User.Equals(usuario)).Contacts.FindAll(x => x.Sent == true && x.Received == true);
+            List<Contact> contacto = DB.AllUsers().Find(x => x.User.Equals(usuario)).Contacts.FindAll(x => x.Sent == true && x.Received == true);
             return View(contacto);
         }
         public IActionResult AddFriend()
@@ -38,11 +38,11 @@ namespace WEB.Controllers
         {
             try
             {
-                Usuario Ingreso = DB.AllUsers().Find(x => x.User.Equals(collection["User"]));
-                Usuario Sesion = DB.AllUsers().Find(x => x.User.Equals(HttpContext.Session.GetString(SessionUser)));
+                User Ingreso = DB.AllUsers().Find(x => x.User.Equals(collection["User"]));
+                User Sesion = DB.AllUsers().Find(x => x.User.Equals(HttpContext.Session.GetString(SessionUser)));
                 if (Ingreso != null)
                 {
-                    Contacto newContact = new Contacto()
+                    Contact newContact = new Contact()
                     {
                         UserContact = collection["User"],
                         Sent = true,
@@ -51,7 +51,7 @@ namespace WEB.Controllers
                     if (Sesion.Contacts.Find(x => x.UserContact.Equals(newContact.UserContact)) == null)
                     {
                         Sesion.Contacts.Add(newContact);
-                        Ingreso.Contacts.Add(new Contacto() { UserContact = Sesion.User, Sent = false, Received = true });
+                        Ingreso.Contacts.Add(new Contact() { UserContact = Sesion.User, Sent = false, Received = true });
                         DB.UpdateUser(Sesion);
                         DB.UpdateUser(Ingreso);
                         ViewData["Success"] = "Solicitud de amistad enviada a " + collection["User"];
@@ -76,21 +76,21 @@ namespace WEB.Controllers
         public IActionResult SentRequests()
         {
             string usuario = HttpContext.Session.GetString(SessionUser);
-            List<Contacto> contacto = DB.AllUsers().Find(x => x.User.Equals(usuario)).Contacts.FindAll(x => x.Sent == true && x.Received == false);
+            List<Contact> contacto = DB.AllUsers().Find(x => x.User.Equals(usuario)).Contacts.FindAll(x => x.Sent == true && x.Received == false);
             return View(contacto);
         }
 
         public IActionResult Requests()
         {
             string usuario = HttpContext.Session.GetString(SessionUser);
-            List<Contacto> contacto = DB.AllUsers().Find(x => x.User.Equals(usuario)).Contacts.FindAll(x => x.Sent == false && x.Received == true);
+            List<Contact> contacto = DB.AllUsers().Find(x => x.User.Equals(usuario)).Contacts.FindAll(x => x.Sent == false && x.Received == true);
             return View(contacto);
         }
 
         public IActionResult AcceptRequests(string id)
         {
-            Usuario upUsuario = DB.AllUsers().Find(x => x.User.Equals(HttpContext.Session.GetString(SessionUser)));
-            Usuario upUsuario2 = DB.AllUsers().Find(x => x.User.Equals(id));
+            User upUsuario = DB.AllUsers().Find(x => x.User.Equals(HttpContext.Session.GetString(SessionUser)));
+            User upUsuario2 = DB.AllUsers().Find(x => x.User.Equals(id));
             int x = upUsuario.Contacts.FindIndex(x => x.UserContact.Equals(id));
             int x2 = upUsuario2.Contacts.FindIndex(x => x.UserContact.Equals(HttpContext.Session.GetString(SessionUser)));
             upUsuario.Contacts[x].Sent = true;
@@ -102,8 +102,8 @@ namespace WEB.Controllers
 
         public IActionResult DeleteRequests(string id, bool sent)
         {
-            Usuario upUsuario = DB.AllUsers().Find(x => x.User.Equals(HttpContext.Session.GetString(SessionUser)));
-            Usuario upUsuario2 = DB.AllUsers().Find(x => x.User.Equals(id));
+            User upUsuario = DB.AllUsers().Find(x => x.User.Equals(HttpContext.Session.GetString(SessionUser)));
+            User upUsuario2 = DB.AllUsers().Find(x => x.User.Equals(id));
             int x = upUsuario.Contacts.FindIndex(x => x.UserContact.Equals(id));
             int x2 = upUsuario2.Contacts.FindIndex(x => x.UserContact.Equals(HttpContext.Session.GetString(SessionUser)));
             upUsuario.Contacts.RemoveAt(x);
