@@ -4,14 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WEB.Conexiones;
 using WEB.Models;
 
 namespace WEB.Controllers
 {
     public class UserController : Controller
     {
-        private IUsersCollection DB = new UsersCollection();
         const string SessionUser = "_User";
 
         public IActionResult Index(string user)

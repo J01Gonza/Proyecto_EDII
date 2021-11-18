@@ -4,14 +4,13 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using WEB.Models;
-using WEB.Conexiones;
 using System.Collections.Generic;
+using System.Net.Http;
 
 namespace WEB.Controllers
 {
     public class HomeController : Controller
     {
-        private IUsersCollection DB = new UsersCollection();
         private readonly ILogger<HomeController> _logger;
         const string SessionUser = "_User";
 
@@ -85,7 +84,7 @@ namespace WEB.Controllers
                 };
                 try
                 {
-                    DB.NewUser(newUser);
+                    HttpResponseMessage ans = GlobalVariables.webClient.PostAsJsonAsync("User", newUser).Result; 
                     ViewData["Success"] = "Usuario registrado exitosamente";
                 }
                 catch (Exception e)
