@@ -47,14 +47,14 @@ namespace WEB.Controllers
             {
                 string uri = "User/UserbyUN/" + collection["userName"];
                 var ingreso = GlobalVariables.webClient.GetAsync(uri).Result;
-                if (ingreso != null)
+                if (ingreso != null && ingreso.IsSuccessStatusCode)
                 {
-                    string json = ingreso.Content.ReadAsStringAsync().Result; 
-                    User us = System.Text.Json.JsonSerializer.Deserialize<User>(json);
+                    User sessionUser = System.Text.Json.JsonSerializer.Deserialize<User>(ingreso.Content.ReadAsStringAsync().Result);
                     //DESCIFRAR CONTRASEÑA
-                    if (us.password == collection["password"])
+                    if (sessionUser.password == collection["password"])
                     {
-                        //ingresa sesión
+                        HttpContext.Session.SetString(SessionUser, sessionUser.userName);
+                        return RedirectToAction( "Index", "User");
                     }
                     else
                     {
@@ -69,7 +69,6 @@ namespace WEB.Controllers
             }
             catch (Exception e)
             {
-                string x = e.Message;
                 ViewData["Error"] = "Ingrese correctamente los datos";
                 return View();
             }
@@ -94,18 +93,18 @@ namespace WEB.Controllers
                     chats = new List<Chats>(),
                     key = collection["Name"].GetHashCode() % 256
                 };
-                try
+                 string json = System.Text.Json.JsonSerializer.Serialize(newUser);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage ans = GlobalVariables.webClient.PostAsync("User/SignUp", content).Result;
+                if (ans.IsSuccessStatusCode)
                 {
-                    string json = System.Text.Json.JsonSerializer.Serialize(newUser);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    HttpResponseMessage ans = GlobalVariables.webClient.PostAsync("User/SignUp", content).Result; 
-                    ViewData["Success"] = "Usuario registrado exitosamente";
+                    return RedirectToAction("Index");
                 }
-                catch (Exception e)
+                else
                 {
-                    ViewData["Error"] = e.Message;
+                    ViewData["Error"] = ans.ReasonPhrase;
+                    return RedirectToAction("Index");
                 }
-                return View();    
             }
             catch (Exception e)
             {

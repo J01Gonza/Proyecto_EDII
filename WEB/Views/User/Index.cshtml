@@ -14,6 +14,49 @@
     else
     {
         <p class="text-center" style="font-size:medium"> <a asp-action="GroupChat">Crear chat grupal</a></p>
-        //acceso a todos los chats
+        <br />
+        <br />
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.members)
+                    </th>
+                    <th>
+                        Ir al chat
+                    </th>
+                    <th>
+                        Detalles
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @if (item.group)
+                            {
+                                string miembros = "";
+                                foreach (var m in item.members)
+                                {
+                                    miembros += m;
+                                    if (m != item.members.Last())
+                                    {
+                                        miembros += ", ";
+                                    }
+                                }
+                            }
+                        </td>
+                        <td>
+                            <pre>@Html.ActionLink("Abrir chat", "Chats", new { id = item, sent = false })</pre>
+                        </td>
+                        <td>
+                            <pre>@Html.ActionLink("Eliminar", "DeleteChat", new { id = item, sent = false }) | @Html.ActionLink("Buscar Mensajes", "SearchMessages", new { id = item, sent = false })</pre>
+                        </td>
+                    </tr>
+                 }
+            </tbody>
+        </table>
     }
 </div>
