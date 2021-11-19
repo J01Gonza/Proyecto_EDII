@@ -14,8 +14,7 @@ namespace WEB.Controllers
     public class UserController : Controller
     {
         const string SessionUser = "_User";
-        static string ActualChat = "";
-        static Boolean GroupChat = false;
+        const string ActualChat = "_Chat";
         public IActionResult Index()
         {
             User user = UserbyName(HttpContext.Session.GetString(SessionUser));
@@ -25,7 +24,7 @@ namespace WEB.Controllers
         public IActionResult Contacts(string id)
         {
             User user = UserbyName(HttpContext.Session.GetString(SessionUser));
-            return View(user.contacts);
+            return View(user.contacts.FindAll(x=> x.sent == true && x.received == true));
         }
         public IActionResult AddFriend()
         {
@@ -136,7 +135,6 @@ namespace WEB.Controllers
             Chats returnm = new Chats();
             if (!group)
             {
-                GroupChat = false;
                 User member = UserbyName(id);
                 Chats chat = activeUser.chats.Find(x => x.members.Count == 2 && x.members.Contains(id));
                 if (chat == null)
@@ -170,7 +168,6 @@ namespace WEB.Controllers
             }
             else
             {
-                GroupChat = true;
                 var members = id.Split(",");
                 List<Chats> groups = activeUser.chats.FindAll(x => x.group == true);
                 foreach (var g in groups)
@@ -181,7 +178,7 @@ namespace WEB.Controllers
                     }
                 }
             }
-            ActualChat = id;
+            HttpContext.Session.SetString(ActualChat, id);
             //descifrar mensajes antes de devolver;
             return View(returnm);
         }
@@ -191,20 +188,21 @@ namespace WEB.Controllers
         public IActionResult Chat(IFormCollection collection)
         {
             Messages incoming = new Messages();
+            //cifrar antes de hacer esto
             incoming.content = collection["Contenido"];
             incoming.sender = HttpContext.Session.GetString("_User");
             User activeUser = UserbyName(HttpContext.Session.GetString(SessionUser));
-            int pos = 0;
+            var Miembros = HttpContext.Session.GetString(ActualChat).Split(",");
             Chats actualChat = new Chats();
-            if (GroupChat)
+            if (Miembros.Length >1)
             {
-                actualChat = activeUser.chats.Find(x => !x.members.Except(ActualChat.Split(",")).Any() && x.members.Count == ActualChat.Split(",").Length + 1);
-                pos = activeUser.chats.IndexOf(actualChat);
+                actualChat = activeUser.chats.Find(x => !x.members.Except(Miembros).Any() && x.members.Count == Miembros.Length + 1);
+                int pos = activeUser.chats.IndexOf(actualChat);
                 activeUser.chats[pos].messages.Add(incoming);
                 foreach (var integrante in ActualChat.Split(","))
                 {
                     User member = UserbyName(integrante);
-                    actualChat = member.chats.Find(x => !x.members.Except(ActualChat.Split(",")).Any() && x.members.Count == ActualChat.Split(",").Length + 1 && x.members.Contains(activeUser.userName));
+                    actualChat = member.chats.Find(x => !x.members.Except(Miembros).Any() && x.members.Count == Miembros.Length + 1 && x.members.Contains(activeUser.userName));
                     pos = member.chats.IndexOf(actualChat);
                     member.chats[pos].messages.Add(incoming);
                     UpdateUser(member);
@@ -212,13 +210,14 @@ namespace WEB.Controllers
             }
             else
             {
-                actualChat = activeUser.chats.Find(x => x.members.Contains(ActualChat) && x.members.Count == 2);
-                pos = activeUser.chats.IndexOf(actualChat);
-                activeUser.chats[pos].messages.Add(incoming);
-                User member = UserbyName(ActualChat);
+
+                User member = UserbyName(HttpContext.Session.GetString(ActualChat));
+                actualChat = activeUser.chats.Find(x => x.members.Contains(HttpContext.Session.GetString(ActualChat)) && x.members.Count == 2);
+                int posactualuser = activeUser.chats.IndexOf(actualChat);
                 actualChat = member.chats.Find(x => x.members.Contains(activeUser.userName) && x.members.Count == 2);
-                pos = member.chats.IndexOf(actualChat);
-                member.chats[pos].messages.Add(incoming);
+                int posmember = member.chats.IndexOf(actualChat);
+                activeUser.chats[posactualuser].messages.Add(incoming);
+                member.chats[posmember].messages.Add(incoming);
                 UpdateUser(member);
             }
             UpdateUser(activeUser);

@@ -2,14 +2,6 @@
 @{
     ViewData["Title"] = "Chat";
 }
-@foreach (var i in Model.members)
-{
-    ViewData["user"] += i;
-    if (i != Model.members.Last())
-    {
-        ViewData["user"] += ", ";
-    }
-}
 <h2 name="user">Chat con @ViewData["users"]</h2>
 <hr>
 <div class="container">
