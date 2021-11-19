@@ -1,4 +1,4 @@
-﻿@model WEB.Models.Usuario
+﻿@model WEB.Models.User
 
 @{
     ViewData["Title"] = "Iniciar sesión";
@@ -15,14 +15,14 @@
         <form asp-action="SignIn">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="User" class="control-label"></label>
-                <input asp-for="User" class="form-control" />
-                <span asp-validation-for="User" class="text-danger"></span>
+                <label asp-for="userName" class="control-label"></label>
+                <input asp-for="userName" class="form-control" />
+                <span asp-validation-for="userName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input type = "password" id = "Password" asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
+                <label asp-for="password" class="control-label"></label>
+                <input type = "password" id = "password" asp-for="password" class="form-control" />
+                <span asp-validation-for="password" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Siguiente" class="btn btn-primary" />

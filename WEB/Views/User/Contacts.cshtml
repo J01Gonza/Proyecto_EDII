@@ -1,15 +1,15 @@
-﻿@model IEnumerable<WEB.Models.Contacto>
+﻿@model IEnumerable<WEB.Models.Contact>
 
 @{
-    ViewData["Title"] = "Viajeros";
+    ViewData["Title"] = "Contactos";
 }
 
-<h1>Viajeros</h1>
+<h1>Contactos</h1>
 
 
 @if (!Model.Any())
 {
-    <h3>No tienes ningún contacto por el momento.<br>Empieza <a asp-action="AddFriend">agregando a otros viajeros</a> o <a asp-action="Requests">revisa tus solicitudes</a></h3>
+    <h3>No tienes ningún contacto por el momento.<br>Empieza <a asp-action="AddFriend">agregando a tus amigos</a> o <a asp-action="Requests"> Revisa tus solicitudes de amistad</a></h3>
 }
 else
 {
@@ -20,7 +20,7 @@ else
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.UserContact)
+                    @Html.DisplayNameFor(model => model.userContact)
                 </th>
                 <th>
                     Chat
@@ -32,10 +32,10 @@ else
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.UserContact)
+                        @Html.DisplayFor(modelItem => item.userContact)
                     </td>
                     <td>
-                        @Html.ActionLink("Abrir Chat", "Chat", new { id = item.UserContact, group = false })
+                        @Html.ActionLink("Abrir Chat", "Chat", new { id = item.userContact })
                     </td>
                 </tr>
             }
