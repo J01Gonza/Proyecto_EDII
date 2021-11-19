@@ -63,18 +63,18 @@ namespace WEB.Controllers
                     }
                     else
                     {
-                        ViewData["Error"] = "Contraseña incorrecta. Intenta de nuevo, viajero";
+                        ViewData["Error"] = "Contraseña incorrecta, viajero. Intenta nuevamente.";
                     }
                 }
                 else
                 {
-                    ViewData["Error"] = "Usuario no registrado, Dirigase a la pestaña de Sign Up";
+                    ViewData["Error"] = "Usuario no registrado, viajero. Dirígete a \"Crear cuenta\" para registrarte.";
                 }
                 return View();
             }
             catch (Exception e)
             {
-                ViewData["Error"] = "Ingrese correctamente los datos";
+                ViewData["Error"] = "Ingresa los datos correctamente, viajero.";
                 return View();
             }
         }
@@ -115,7 +115,7 @@ namespace WEB.Controllers
             catch (Exception e)
             {
                 string error = e.Message;
-                ViewData["Error"] = "Ingrese correctamente los datos, por favor";
+                ViewData["Error"] = "Ingresa los datos correctamente, viajero.";
                 return View();
             }
         }
