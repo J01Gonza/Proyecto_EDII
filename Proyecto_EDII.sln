@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31515.178
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "API\API.csproj", "{E41E13C0-F06B-4955-8484-D50F332A1A99}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WEB", "WEB\WEB.csproj", "{B16701D4-5420-4E25-B749-FA4358FEE298}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DLL", "DLL\DLL.csproj", "{89124AE4-F045-4A7B-AB28-C7F11D6382FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API1", "API1\API1.csproj", "{26B3B88F-5F28-4167-8F49-D6704A52B607}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API1", "API1\API1.csproj", "{26B3B88F-5F28-4167-8F49-D6704A52B607}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E41E13C0-F06B-4955-8484-D50F332A1A99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E41E13C0-F06B-4955-8484-D50F332A1A99}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E41E13C0-F06B-4955-8484-D50F332A1A99}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E41E13C0-F06B-4955-8484-D50F332A1A99}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B16701D4-5420-4E25-B749-FA4358FEE298}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B16701D4-5420-4E25-B749-FA4358FEE298}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B16701D4-5420-4E25-B749-FA4358FEE298}.Release|Any CPU.ActiveCfg = Release|Any CPU
