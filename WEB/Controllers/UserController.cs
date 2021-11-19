@@ -127,9 +127,10 @@ namespace WEB.Controllers
                 return RedirectToAction(nameof(Request));
             }
         }
+
         public IActionResult Chat(string id, bool group)
         {
-            ViewData["usuarios"] = id;
+            ViewData["users"] = id;
             User activeUser = UserbyName(HttpContext.Session.GetString(SessionUser));
             Chats returnm = new Chats();
             if (!group)
@@ -202,7 +203,6 @@ namespace WEB.Controllers
             }
             else
             {
-
                 User member = UserbyName(HttpContext.Session.GetString(ActualChat));
                 actualChat = activeUser.chats.Find(x => x.members.Contains(HttpContext.Session.GetString(ActualChat)) && x.members.Count == 2);
                 int posactualuser = activeUser.chats.IndexOf(actualChat);
@@ -215,7 +215,30 @@ namespace WEB.Controllers
             UpdateUser(activeUser);
             return View(actualChat);
         }
-    
+
+        public IActionResult SearchMessages(Chats search)
+        {
+            string miembros = "";
+            foreach(var m in search.members)
+            {
+                if(m != HttpContext.Session.GetString(SessionUser))
+                {
+                    miembros += m;
+                    if(m != search.members.Last() && !search.group)
+                    {
+                        miembros += ", ";
+                    }
+                }
+            }
+            ViewData["user"] = miembros;
+            return View(search);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SearchMessages()
+        {
+            return View();
+        }
         private string UpdateUser(User upUser)
         {
             string p = upUser.id.ToString();
