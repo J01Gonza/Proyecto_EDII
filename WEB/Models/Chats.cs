@@ -10,6 +10,6 @@ namespace WEB.Models
         public List<Messages> messages { get; set; }
         public bool group { get; set; }
         public List<string> members { get; set; }
-        public List<string> keys { get; set; }
+        public List<char> keys { get; set; }
     }
 }

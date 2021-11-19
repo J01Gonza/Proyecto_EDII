@@ -135,6 +135,7 @@ namespace WEB.Controllers
             Chats returnm = new Chats();
             if (!group)
             {
+                diffiehellman DH = new diffiehellman();
                 User member = UserbyName(id);
                 Chats chat = activeUser.chats.Find(x => x.members.Count == 2 && x.members.Contains(id));
                 if (chat == null)
@@ -144,15 +145,14 @@ namespace WEB.Controllers
                         messages = new List<Messages>(),
                         group = false,
                         members = new List<string>(),
-                        keys = new List<string>()
+                        keys = new List<char>()
                     };
-                    diffiehellman DH = new diffiehellman();
                     int p = DH.pNumber();
                     int g = DH.gBase();
-                    newChat.keys.Add("p:" + p);
-                    newChat.keys.Add("g:" + g);
-                    newChat.keys.Add(activeUser.name + ":" + DH.secretKey(activeUser.key, g, p));
-                    newChat.keys.Add(member.name + ":" + DH.secretKey(member.key, g, p));
+                    newChat.keys.Add((char)p);
+                    newChat.keys.Add((char)g);
+                    newChat.keys.Add((char)activeUser.key);
+                    newChat.keys.Add((char)member.key);
                     newChat.members.Add(activeUser.userName);
                     newChat.members.Add(member.userName);
                     activeUser.chats.Add(newChat);
@@ -163,6 +163,11 @@ namespace WEB.Controllers
                 }
                 else
                 {
+                    int secretKey = DH.secretKey(chat.keys[2], chat.keys[3], chat.keys[1], chat.keys[0]);
+                    for (int i = 0; i < chat.messages.Count(); i++)
+                    {
+                        chat.messages[i].content = sdesEncode(chat.messages[i].content, sdesKeys(secretKey).key2, sdesKeys(secretKey).key2);
+                    }
                     returnm = chat;
                 }
             }
@@ -179,7 +184,6 @@ namespace WEB.Controllers
                 }
             }
             HttpContext.Session.SetString(ActualChat, id);
-            //descifrar mensajes antes de devolver;
             return View(returnm);
         }
 
@@ -188,7 +192,6 @@ namespace WEB.Controllers
         public IActionResult Chat(IFormCollection collection)
         {
             Messages incoming = new Messages();
-            //cifrar antes de hacer esto
             incoming.content = collection["Contenido"];
             incoming.sender = HttpContext.Session.GetString("_User");
             User activeUser = UserbyName(HttpContext.Session.GetString(SessionUser));
@@ -210,9 +213,11 @@ namespace WEB.Controllers
             }
             else
             {
-
+                diffiehellman DH = new diffiehellman();
                 User member = UserbyName(HttpContext.Session.GetString(ActualChat));
                 actualChat = activeUser.chats.Find(x => x.members.Contains(HttpContext.Session.GetString(ActualChat)) && x.members.Count == 2);
+                int secretKey = DH.secretKey(actualChat.keys[2], actualChat.keys[3], actualChat.keys[1], actualChat.keys[0]);
+                incoming.content = sdesEncode(incoming.content, sdesKeys(secretKey).key1, sdesKeys(secretKey).key2);
                 int posactualuser = activeUser.chats.IndexOf(actualChat);
                 actualChat = member.chats.Find(x => x.members.Contains(activeUser.userName) && x.members.Count == 2);
                 int posmember = member.chats.IndexOf(actualChat);
@@ -247,6 +252,31 @@ namespace WEB.Controllers
             List<User> allusers = System.Text.Json.JsonSerializer.Deserialize<List<User>>(ingreso.Content.ReadAsStringAsync().Result);
             User sessionUser = allusers.Find(x => x.userName == user);
             return sessionUser;
+        }
+
+        public (string key1, string key2) sdesKeys(int key)
+        {
+            int[] P10 = { 3, 5, 2, 7, 4, 10, 1, 9, 8, 6 };
+            int[] P8 = { 6, 3, 7, 4, 8, 5, 10, 9 };
+            sdes SDES = new sdes();
+            return SDES.generateKey(Convert.ToString(key, 2).PadLeft(10, '0'), P10, P8); ;
+        }
+
+        public string sdesEncode(string str, string key1, string key2)
+        {
+            List<byte> encode = new List<byte>();
+            int[] P4 = { 2, 4, 3, 1 };
+            int[] EP = { 4, 1, 2, 3, 2, 3, 4, 1 };
+            int[] IP = { 2, 6, 3, 1, 4, 8, 5, 7 };
+            int[] IP1 = { 4, 1, 3, 5, 7, 2, 8, 6 };
+            sdes SDES = new sdes();
+            byte[] bytes = Encoding.Unicode.GetBytes(str);
+            foreach (var item in bytes)
+            {
+                string mainKey = Convert.ToString(item, 2).PadLeft(8, '0');
+                encode.Add(SDES.Enconde(mainKey, key1, key2, P4, EP, IP, IP1));
+            }
+            return Encoding.Unicode.GetString(encode.ToArray());
         }
     }
 }
