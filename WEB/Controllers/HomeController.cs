@@ -9,6 +9,8 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using System.Text;
 using DLL;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 
 namespace WEB.Controllers
 {
@@ -42,18 +44,18 @@ namespace WEB.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult SignIn(IFormCollection collection)
+        public async System.Threading.Tasks.Task<IActionResult> SignIn(IFormCollection collection)
         {
             try
             {
-                string uri = "User/UserbyUN/" + collection["userName"];
-                var ingreso = GlobalVariables.webClient.GetAsync(uri).Result;
+                var ingreso = GlobalVariables.webClient.GetAsync("User/AllUsers").Result;
                 if (ingreso != null && ingreso.IsSuccessStatusCode)
                 {
-                    User sessionUser = System.Text.Json.JsonSerializer.Deserialize<User>(ingreso.Content.ReadAsStringAsync().Result);
+                    string p = await ingreso.Content.ReadAsStringAsync();
+                    List<User> allusers = JsonConvert.DeserializeObject<List<User>>(p);
+                    User sessionUser = allusers.Find(x => x.userName == collection["userName"]);
                     var k = sdesKeys(sessionUser.key);
                     string password = sdesEncode(sessionUser.password, k.key2, k.key1);
-                    //DESCIFRAR CONTRASEÑA
                     if (password == collection["password"])
                     {
                         HttpContext.Session.SetString(SessionUser, sessionUser.userName);
@@ -97,7 +99,7 @@ namespace WEB.Controllers
                     chats = new List<Chats>(),
                     key = collection["Name"].GetHashCode() % 256
                 };
-                 string json = System.Text.Json.JsonSerializer.Serialize(newUser);
+                string json = System.Text.Json.JsonSerializer.Serialize(newUser);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpResponseMessage ans = GlobalVariables.webClient.PostAsync("User/SignUp", content).Result;
                 if (ans.IsSuccessStatusCode)

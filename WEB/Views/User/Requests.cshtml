@@ -37,7 +37,7 @@ else
                         @Html.DisplayFor(modelItem => item.userContact)
                     </td>
                     <td>
-                        <pre>@Html.ActionLink("Aceptar", "AcceptRequests", new { id = item.userContact, sent = false })  |  @Html.ActionLink("Eliminar", "DeleteRequests", new { id = item.userContact })</pre>
+                        <pre>@Html.ActionLink("Aceptar", "AcceptRequests", new { id = item.userContact})  |  @Html.ActionLink("Eliminar", "DeleteRequests", new { id = item.userContact, sent = false})</pre>
                     </td>
                 </tr>
             }

@@ -20,7 +20,8 @@ namespace API1.Conexiones
 
         public async Task<List<User>> AllUsers()
         {
-            return await Collection.FindAsync(new BsonDocument()).Result.ToListAsync();
+            var query = Collection.Find(new BsonDocument()).ToListAsync();
+            return query.Result;
         }
 
         public async Task<User> UserbyID(string Id)
@@ -60,13 +61,12 @@ namespace API1.Conexiones
 
         public async Task UpdateUser(User usuario)
         {
-            var filter = Builders<User>.Filter.Eq(x => x.id, usuario.id);
-            await Collection.ReplaceOneAsync(filter, usuario);
-
+            await Collection.ReplaceOneAsync(x=> x.id == usuario.id, usuario);
         }
         public async Task<User> UserbyName(string id)
         {
-            return AllUsers().Result.Find(x => x.userName.Equals(id));
+            var filter = Builders<User>.Filter.Eq(x => x.userName, id);
+            return await Collection.FindAsync(filter).Result.FirstAsync();
         }
     }
 }

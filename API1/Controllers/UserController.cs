@@ -20,11 +20,19 @@ namespace API1.Controllers
         {
             return Ok(await db.AllUsers());
         }
+
         [HttpGet]
         [Route("UserbyUN/{username}")]
         public async Task<IActionResult> UserbyName(string username)
         {
             return Ok(await db.UserbyName(username));
+        }
+
+        [HttpGet]
+        [Route("UserbyID/{id}")]
+        public async Task <IActionResult> GetbyID([FromRoute]string id)
+        {
+            return Ok(await db.UserbyID(id));
         }
 
         [HttpPost]
@@ -43,9 +51,9 @@ namespace API1.Controllers
             return Created("Created", newuser);
         }
 
-        [HttpPut("id")]
+        [HttpPut]
         [Route("Update")]
-        public async Task<IActionResult> UpdateUser([FromBody] User newuser, string id)
+        public async Task<IActionResult> UpdateUser([FromBody] User newuser)
         {
             if (newuser == null)
             {
@@ -55,7 +63,6 @@ namespace API1.Controllers
             {
                 ModelState.AddModelError("Nombre de usuario", "Nombre de usuario no encontrado");
             }
-            newuser.id = new MongoDB.Bson.ObjectId(id);
             await db.UpdateUser(newuser);
             return Created("Created", newuser);
         }

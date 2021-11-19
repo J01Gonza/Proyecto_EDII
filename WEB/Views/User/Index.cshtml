@@ -9,7 +9,7 @@
 <div class="text-center">
     @if (!Model.Any())
     {
-        <h3>No tienes ningún chat activo.<br>Inicia una conversación con otro <a asp-action="Contacts">viajero</a> o <a asp-action="AddFriend">agrega nuevos viajeros</a></h3>
+        <h3>No tienes ningún chat activo.<br>Inicia una conversación con otro <a asp-action="Contacts">viajero</a> o <a asp-action="AddFriend">busca nuevos compañeros de aventura</a></h3>
     }
     else
     {
@@ -20,7 +20,7 @@
             <thead>
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.members)
+                        Miembros
                     </th>
                     <th>
                         Ir al chat

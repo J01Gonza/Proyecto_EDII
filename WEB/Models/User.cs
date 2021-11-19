@@ -10,8 +10,11 @@ namespace WEB.Models
     public class User
     {
         [BsonId]
-        public ObjectId id { get; set; }
-        
+        [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
+        public string id { get; set; }
+
+        [BsonElement("Usuario")]
+
         public string userName { get; set; }
         
         public string name { get; set; }
