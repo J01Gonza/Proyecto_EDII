@@ -14,9 +14,10 @@ namespace WEB.Controllers
 
         public IActionResult Index()
         {
-            string x = HttpContext.Session.GetString(SessionUser);
-            //List<Chats> chats = DB.AllUsers().Find(x => x.User.Equals(user)).Chats;
-            return View(new Chats());
+            string uri = "User/UserbyUN/" + HttpContext.Session.GetString(SessionUser);
+            var userSession = GlobalVariables.webClient.GetAsync(uri).Result;
+            User activeUser = System.Text.Json.JsonSerializer.Deserialize<User>(userSession.Content.ReadAsStringAsync().Result);
+            return View(activeUser.chats);
         }
 
         public IActionResult Contacts()

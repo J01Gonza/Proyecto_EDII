@@ -7,10 +7,10 @@
 @{
     ViewData["Title"] = "Chat";
 }
-@foreach (var i in Model.usuarios)
+@foreach (var i in Model.members)
 {
     ViewData["user"] += i;
-    if (i != Model.usuarios.Last())
+    if (i != Model.members.Last())
     {
         ViewData["user"] += ", ";
     }
@@ -30,16 +30,16 @@
             </div>
         </div>
     </form>
-    @if (Model.mensajes.Any())
+    @if (Model.messages.Any())
     {
         <table class="table">
             <tbody>
-                @foreach (var item in Model.mensajes)
+                @foreach (var item in Model.messages)
                 {
                     <tr>
                         <td>
-                            <b>@item.Sender:</b>
-                            <br /> @item.Content
+                            <b>@item.sender:</b>
+                            <br /> @item.content
                         </td>
                         <td>
                             @Html.ActionLink("Borrar para todos", "Delete") | @Html.ActionLink("Borrar para mí", "Delete")
