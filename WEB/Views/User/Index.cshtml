@@ -31,31 +31,35 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+               @foreach (var item in Model)
                 {
+                    string miembros = "";
                     <tr>
                         <td>
-                            @if (item.group)
+                           @foreach (var m in item.members)
                             {
-                                string miembros = "";
-                                foreach (var m in item.members)
+                                byte[] viewbag;
+                                ViewContext.HttpContext.Session.TryGetValue("_User", out viewbag);
+                                string actualuser = new string(System.Text.Encoding.UTF8.GetString(viewbag).ToCharArray());
+                                if (m != actualuser)
                                 {
                                     miembros += m;
-                                    if (m != item.members.Last())
+                                    if (m != item.members.Last() && item.group)
                                     {
-                                        miembros += ", ";
+                                       miembros += ", ";
                                     }
                                 }
                             }
+                            <p>@miembros</p>
                         </td>
                         <td>
-                            <pre>@Html.ActionLink("Abrir chat", "Chats", new { id = item, sent = false })</pre>
+                            <pre>@Html.ActionLink("Abrir chat", "Chat", new { id = miembros})</pre>
                         </td>
                         <td>
                             <pre>@Html.ActionLink("Eliminar", "DeleteChat", new { id = item, sent = false }) | @Html.ActionLink("Buscar Mensajes", "SearchMessages", new { id = item, sent = false })</pre>
                         </td>
                     </tr>
-                 }
+                }
             </tbody>
         </table>
     }
