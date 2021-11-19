@@ -51,8 +51,10 @@ namespace WEB.Controllers
                 if (ingreso != null && ingreso.IsSuccessStatusCode)
                 {
                     User sessionUser = System.Text.Json.JsonSerializer.Deserialize<User>(ingreso.Content.ReadAsStringAsync().Result);
+                    var k = sdesKeys(sessionUser.key);
+                    string password = sdesEncode(sessionUser.password, k.key2, k.key1);
                     //DESCIFRAR CONTRASEÑA
-                    if (sessionUser.password == collection["password"])
+                    if (password == collection["password"])
                     {
                         HttpContext.Session.SetString(SessionUser, sessionUser.userName);
                         return RedirectToAction( "Index", "User");
