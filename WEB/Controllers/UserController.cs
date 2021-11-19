@@ -61,7 +61,7 @@ namespace WEB.Controllers
                         }
                         else
                         {
-                            ViewData["Error"] = "Esta solicitud ya fue enviada";
+                            ViewData["Error"] = "Ya enviaste esta solicitud, viajero.";
                         }
                     }
                     else
@@ -71,12 +71,12 @@ namespace WEB.Controllers
                 }
                 else
                 {
-                    ViewData["Error"] = "Viajero no encontrado en la biblioteca, intente de nuevo";
+                    ViewData["Error"] = "Viajero no registrado, intenta de nuevo.";
                 }
             }
             catch
             {
-                ViewData["Error"] = "Información ingresada no válida, intente de nuevo";
+                ViewData["Error"] = "Ingresa los datos correctamente, viajero.";
             }
             return View();
         }
@@ -118,7 +118,7 @@ namespace WEB.Controllers
             addUser.contacts.RemoveAt(x2);
             UpdateUser(activeUser);
             UpdateUser(activeUser);
-            ViewData["Success"] = "Solicitud de amistad eliminada correctamente";
+            ViewData["Success"] = "Solicitud de amistad eliminada correctamente.";
             if (sent)
             {
                 return RedirectToAction(nameof(SentRequests));
