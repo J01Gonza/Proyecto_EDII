@@ -9,16 +9,16 @@ namespace DLL
 {
     public interface DiffieHellman
     {
-        int secretKey(int key, int g, int p);
+        int secretKey(int key1, int key2, int g, int p);
         int gBase();
         int pNumber();
     }
 
     public class diffiehellman : DiffieHellman
     {
-        public int secretKey(int key, int g, int p)
+        public int secretKey(int key1, int key2, int g, int p)
         {
-            return (int)BigInteger.ModPow(g, key, p);
+            return (int)BigInteger.ModPow(g, key1 * key2, p);
         }
 
         public int gBase()
