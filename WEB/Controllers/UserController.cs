@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using WEB.Models;
+using DLL;
 
 namespace WEB.Controllers
 {
@@ -142,11 +143,18 @@ namespace WEB.Controllers
                 {
                     Chats newChat = new Chats()
                     {
-                        members = new List<string>(),
                         messages = new List<Messages>(),
-                        //DECLARAR LLAVES DE CIFRADO
-                        group = false
+                        group = false,
+                        members = new List<string>(),
+                        keys = new List<string>()
                     };
+                    diffiehellman DH = new diffiehellman();
+                    int p = DH.pNumber();
+                    int g = DH.gBase();
+                    newChat.keys.Add("p:" + p);
+                    newChat.keys.Add("g:" + g);
+                    newChat.keys.Add(activeUser.name + ":" + DH.secretKey(activeUser.key, g, p));
+                    newChat.keys.Add(member.name + ":" + DH.secretKey(member.key, g, p));
                     newChat.members.Add(activeUser.userName);
                     newChat.members.Add(member.userName);
                     activeUser.chats.Add(newChat);
