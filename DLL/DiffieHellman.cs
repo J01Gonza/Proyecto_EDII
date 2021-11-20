@@ -10,7 +10,7 @@ namespace DLL
     public interface DiffieHellman
     {
         int secretKey(int key1, int key2, int g, int p);
-        int gBase();
+        int gBase(int p);
         int pNumber();
     }
 
@@ -21,10 +21,15 @@ namespace DLL
             return (int)BigInteger.ModPow(g, key1 * key2, p);
         }
 
-        public int gBase()
+        public int gBase(int p)
         {
             Random random = new Random();
-            return random.Next(2, 255);
+            int g;
+            do
+            {
+                g = random.Next(2, 255);
+            } while (g > p);
+            return g;
         }
 
         public int pNumber()
@@ -33,7 +38,7 @@ namespace DLL
             int p;
             do
             {
-                p = random.Next(255);
+                p = random.Next(2, 255);
             } while (!isPrime(p));
             return p;
         }

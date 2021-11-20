@@ -159,7 +159,7 @@ namespace WEB.Controllers
                         keys = new List<char>()
                     };
                     int p = DH.pNumber();
-                    int g = DH.gBase();
+                    int g = DH.gBase(p);
                     newChat.keys.Add((char)p);
                     newChat.keys.Add((char)g);
                     newChat.keys.Add((char)activeUser.key);
