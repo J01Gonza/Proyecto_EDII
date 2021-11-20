@@ -1,0 +1,51 @@
+﻿@model WEB.Models.Chats
+@{
+    string miembros = "";
+    @foreach (var m in Model.members)
+    {
+        byte[] viewbag;
+        ViewContext.HttpContext.Session.TryGetValue("_User", out viewbag);
+        string actualuser = new string(System.Text.Encoding.UTF8.GetString(viewbag).ToCharArray());
+        if (m != actualuser)
+        {
+            miembros += m;
+            if (m != Model.members.Last() && Model.group)
+            {
+                miembros += ", ";
+            }
+        }
+    }
+    ViewData["Title"] = "Mensajes encontrados";
+}
+<h2 name="user">Mensajes encontrados con @miembros</h2>
+@Html.ActionLink("Regresar", "Chat", new {id = miembros, group = Model.group })
+@if (!Model.messages.Any())
+{
+    <h3>No se encontró ningún mensaje :(</h3>
+}
+else
+{
+    <br />
+    <br />
+    <table class="table">
+        <tbody>
+            @foreach (var item in Model.messages)
+            {
+                <tr>
+                    <td>
+                        <b>@item.sender:</b>
+                        <br /> @item.content
+                    </td>
+                    <td class="align-middle">
+                        @Html.ActionLink("Borrar para todos", "Delete") | @Html.ActionLink("Borrar para mí", "DeleteForMe", new{ mID = item.id})
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<script>
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+</script>

@@ -1,0 +1,82 @@
+﻿@model WEB.Models.Chats
+@{
+    ViewData["Title"] = "Chat";
+}
+<h2 name="user">Chat con @ViewData["users"]</h2>
+<hr>
+
+<div class="row">
+  <div class="col-md-4">
+    <form class="row" asp-action="Chat">
+      <div class="form-group">
+        <input type="text" name="Contenido" class="form-control" />
+      </div>
+      <div class="form-group">
+        <input type="submit" value="Enviar" class="btn btn-primary" />
+      </div>
+    </form>
+    <form class="row" asp-action="UploadFile" method="post" enctype="multipart/form-data">
+      <div class="form-group">
+        <input type="file" name="file" />
+      </div>
+      <div class="form-group">
+        <input type="submit" value="Enviar" class="btn btn-primary" />
+      </div>
+    </form>
+    <form class="row" asp-action="Search">
+      <div class="form-group">
+        <input type="text" name="Contenido" class="form-control" />
+      </div>
+      <div class="form-group">
+        <input type="submit" name="Search" value="Buscar mensajes" class="btn btn-primary" />
+      </div>
+    </form>
+    <div class="row">
+      <a href='@Url.Action("UpdateMessages", "User", new { id = Model.id })' class="btn btn-primary">Actualizar Mensajes</a>
+    </div>
+  </div>
+</div>
+<br />
+<br />
+<div class="container">
+    @if (Model.messages.Any())
+    {
+        <table class="table">
+            <tbody>
+                @foreach (var item in Model.messages)
+                {
+                    if (item != null)
+                    {
+                        <tr>
+                            <td>
+                                <b>@item.sender:</b>
+                                @if (item.content != null)
+                                {
+                                    <br /> @item.content
+                                }
+                                else
+                                {
+                                    <br /> @item.file.name
+                                    @Html.ActionLink("Descargar", "DownloadFile", new { mID = item.id })
+                                }
+                            </td>
+                            <td class="align-middle">
+                                @Html.ActionLink("Borrar para todos", "DeleteForAll", new { mID = item.id }) | @Html.ActionLink("Borrar para mí", "DeleteForMe", new { mID = item.id })
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <br /> <br />
+        <h3 style="opacity: 0.4">Inicia una conversación con @ViewData["users"]</h3>
+    }
+</div>
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>

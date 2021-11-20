@@ -1,0 +1,30 @@
+﻿@model IEnumerable<string>
+@{
+    ViewBag.Title = "Nuevo chat grupal";
+}
+<div class="text-center">
+    <p style="font-size:larger; color:red">@ViewData["Error"]</p>
+    <div class="row">
+        Usuarios en el chat:
+        @if (Model.Any())
+        {
+            @ViewBag.members
+        }
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="GroupStart">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label value="Nombre de usuario" class="control-label"></label>
+                <input name="userName" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Añadir miembro" class="btn btn-primary" />
+            </div>
+        </form>
+        <div class="row">
+            <a href='@Url.Action("CreateGroup", "User", new { members = Model })' class="btn btn-primary">Crear chat grupal</a>
+        </div>
+    </div>
+</div>

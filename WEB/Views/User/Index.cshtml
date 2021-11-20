@@ -1,19 +1,60 @@
 ﻿@model IEnumerable<WEB.Models.Chats>
 
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Chats";
 }
 
-<h1>Chats</h1>
-
+<h1>@ViewData["Title"]</h1>
+<hr>
 <div class="text-center">
     @if (!Model.Any())
     {
-        <h3 >No tienes ningún chat activo.<br>Inicia una conversación con tus <a asp-action="Contacts">contactos</a> o <a asp-action="AddFriend">agrega nuevos amigos</a></h3>
+        <h3>No tienes ningún chat activo.<br>Inicia una conversación con otro <a asp-action="Contacts">viajero</a> o <a asp-action="AddFriend">busca nuevos compañeros de aventura</a></h3>
     }
     else
     {
-        <p class="text-center" style="font-size:medium"> <a asp-action="GroupChat">Crear chat grupal</a></p>
-        //acceso a todos los chats
+        <p class="text-center" style="font-size:medium"> <a asp-action="GroupStart">Crear chat grupal</a></p>
+        <br />
+        <br />
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Miembros
+                    </th>
+                    <th>
+                        Ir al chat
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+               @foreach (var item in Model)
+                {
+                    string miembros = "";
+                    <tr>
+                        <td>
+                           @foreach (var m in item.members)
+                            {
+                                byte[] viewbag;
+                                ViewContext.HttpContext.Session.TryGetValue("_User", out viewbag);
+                                string actualuser = new string(System.Text.Encoding.UTF8.GetString(viewbag).ToCharArray());
+                                if (m != actualuser)
+                                {
+                                    miembros += m;
+                                    if (m != item.members.Last() && item.group)
+                                    {
+                                       miembros += ",";
+                                    }
+                                }
+                            }
+                            <p>@miembros</p>
+                        </td>
+                        <td>
+                            <pre>@Html.ActionLink("Abrir chat", "Chat", new { id = miembros, group = item.group})</pre>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     }
 </div>

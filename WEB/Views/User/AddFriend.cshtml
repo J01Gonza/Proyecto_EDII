@@ -1,11 +1,11 @@
-﻿@model WEB.Models.Usuario
+﻿@model WEB.Models.User
 
 @{
-    ViewData["Title"] = "Añadir contacto nuevo";
+    ViewData["Title"] = "Añadir Viajero";
 }
 
-<h1>Sign In</h1>
-
+<h1>@ViewData["Title"]</h1>
+<hr>
 <div class="text-center">
     <p style="font-size:larger; color:red">@ViewData["Error"]</p>
     <p style="font-size:larger; color:yellowgreen">@ViewData["Success"]</p>
@@ -15,12 +15,12 @@
         <form asp-action="AddFriend">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="User" class="control-label"></label>
-                <input asp-for="User" class="form-control" />
-                <span asp-validation-for="User" class="text-danger"></span>
+                <label asp-for="userName" class="control-label"></label>
+                <input asp-for="userName" class="form-control" />
+                <span asp-validation-for="userName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Agregar usuario" class="btn btn-primary" />
+                <input type="submit" value="Añadir" class="btn btn-primary" />
             </div>
         </form>
     </div>
