@@ -11,6 +11,6 @@ namespace API1.Models
         public int id { get; set; }
         public string content { get; set; }
         public string sender { get; set; }
-        public IFormFile file { get; set; }
+        public File file { get; set; }
     }
 }
