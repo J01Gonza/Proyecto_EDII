@@ -11,7 +11,9 @@
 </div>
 @if (!Model.Any())
 {
-    <h3 class="text-center">No tienes ninguna solicitud<br /> Regresa pronto o <a asp-action="AddFriend">agrega a otro viajero</a> con su nombre de usuario</h3>
+    <h3 class="text-center">No tienes ninguna solicitud<br /> Regresa pronto o <a asp-action="AddFriend">agrega a otro viajero</a> con su nombre de usuario
+    <br /><a asp-action="SentRequests">Solicitudes Enviadas</a>    
+    </h3>
 }
 else
 {
