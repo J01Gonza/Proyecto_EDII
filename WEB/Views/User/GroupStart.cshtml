@@ -1,0 +1,27 @@
+﻿@model IEnumerable<string>
+@{
+    ViewBag.Title = "Nuevo chat grupal";
+}
+<div class="row">
+    Usuarios en el chat:
+    @if (Model.Any())
+    {
+        @ViewBag.members
+    }
+    <form asp-action="GroupStart">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label value="Nombre de usuario" class="control-label"></label>
+            <input name="userName" class="form-control" />
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Añadir miembro" class="btn btn-primary" />
+        </div>
+    </form>
+    <form asp-action="CreateGroup">
+        <div class="form-group">
+            <input type="submit" value="Crear grupo" class="btn btn-primary" />
+        </div>
+        @Html.HiddenFor(x => Model);
+    </form>
+</div>

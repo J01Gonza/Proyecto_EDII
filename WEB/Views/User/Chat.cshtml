@@ -24,12 +24,13 @@
 </div>
 
     <div class="row">
-        <form class="col-sm-10 row"asp-action="Search">
+        <form class="col-sm-10 row" asp-action="Search">
             <div class="col-sm-8">
                 <input type="submit" name="Search" value="Buscar mensajes" class="btn btn-primary" />
                 <input type="text" name="Contenido" class="form-control" />
             </div>
         </form>
+    @Html.ActionLink("Actualizar mensajes", "UpdateMessages", new { id = Model.id}, "btn-button")
     </div>
     <br />
     <br />
@@ -42,30 +43,30 @@
                 {
                     if (item != null)
                     {
-                    <tr>
-                        <td>
-                            <b>@item.sender:</b>
-                            @if(item.content != null)
-                            {
-                                <br /> @item.content
-                            }
-                            else
-                            {
-                                <br /> @item.file.name
-                                @Html.ActionLink("Descargar", "DownloadFile", new { mID = item.id })
-                            }
-                        </td>
-                        <td class="align-middle">
-                        @Html.ActionLink("Borrar para todos", "DeleteForAll", new { mID = item.id }) | @Html.ActionLink("Borrar para mí", "DeleteForMe", new { mID = item.id })
-                        </td>
-                    </tr>
+                        <tr>
+                            <td>
+                                <b>@item.sender:</b>
+                                @if (item.content != null)
+                                {
+                                    <br /> @item.content
+                                }
+                                else
+                                {
+                                    <br /> @item.file.name
+                                    @Html.ActionLink("Descargar", "DownloadFile", new { mID = item.id })
+                                }
+                            </td>
+                            <td class="align-middle">
+                                @Html.ActionLink("Borrar para todos", "DeleteForAll", new { mID = item.id }) | @Html.ActionLink("Borrar para mí", "DeleteForMe", new { mID = item.id })
+                            </td>
+                        </tr>
                     }
                 }
             </tbody>
         </table>
     }
     else
-    {   
+    {
         <br /> <br />
         <h3 style="opacity: 0.4">Inicia una conversación con @ViewData["users"]</h3>
     }
