@@ -343,8 +343,48 @@ namespace WEB.Controllers
                     HttpContext.Session.SetString(GroupMembers, collection["userName"]);
                 }
             }
+            else
+            {
+                ViewData["Error"] = "Viajero no encontrado entre los contactos";
+            }
             string r = HttpContext.Session.GetString(GroupMembers);
             return View(r.Split(","));
+        }
+
+        public IActionResult CreateGroup(IEnumerable<string> members)
+        {
+            if(members.Count() == 1)
+            {
+                ViewData["Error"] = "No es posible crear un grupo con menos de 3 viajeros, lo sentimos :(";
+                return RedirectToAction("GroupStart");
+            }
+            else
+            {
+                User act = UserbyName(HttpContext.Session.GetString(SessionUser));
+                Chats ChatGroup = new Chats()
+                {
+                    messages = new List<Messages>(),
+                    group = true,
+                    members = new List<string>(),
+                    keys = new List<int>()
+                };
+                ChatGroup.members.Add(act.userName);
+                act.chats.Add(ChatGroup);
+                foreach(var miembro in members)
+                {
+                    ChatGroup.members.Add(miembro);
+                }
+                foreach (var miembro in members)
+                {
+                    User mem = UserbyName(miembro);
+                    ChatGroup.id = mem.chats.Count();
+                    mem.chats.Add(ChatGroup);
+                    UpdateUser(mem);
+                }
+                ChatGroup.id = act.chats.Count;
+                UpdateUser(act);
+            }
+            return RedirectToAction("Index");
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
