@@ -179,10 +179,14 @@ namespace WEB.Controllers
                     int secretKey = DH.secretKey(chat.keys[2], chat.keys[3], chat.keys[1], chat.keys[0]);
                     for (int i = 0; i < chat.messages.Count(); i++)
                     {
-                        if (chat.messages[i].content != null)
+                        if (chat.messages[i] != null)
                         {
-                            chat.messages[i].content = sdesEncode(chat.messages[i].content, sdesKeys(secretKey).key2, sdesKeys(secretKey).key1);
+                            if (chat.messages[i].content != null)
+                            {
+                                chat.messages[i].content = sdesEncode(chat.messages[i].content, sdesKeys(secretKey).key2, sdesKeys(secretKey).key1);
+                            }
                         }
+                        
                     }
                     returnm = chat;
                 }

@@ -45,7 +45,8 @@
                             }
                             else
                             {
-
+                                <br /> @item.file.name
+                                @Html.ActionLink("Descargar", "DownloadFile", new { mID = item.id })
                             }
                         </td>
                         <td class="align-middle">
