@@ -20,20 +20,20 @@
             <input type="file" name="file" />
             <input type="submit" value="Enviar" class="btn btn-primary"/>
         </form>
-    </div>
-</div>
-
-    <div class="row">
         <form class="col-sm-10 row" asp-action="Search">
-            <div class="col-sm-8">
+            <div class="form-group">
                 <input type="submit" name="Search" value="Buscar mensajes" class="btn btn-primary" />
                 <input type="text" name="Contenido" class="form-control" />
             </div>
         </form>
-    @Html.ActionLink("Actualizar mensajes", "UpdateMessages", new { id = Model.id}, "btn-button")
+        <div class="row">
+            <a href='@Url.Action("UpdateMessages", "User", new { id = Model.id })' class="btn btn-primary">Actualizar Mensajes</a>
+            @Html.ActionLink("Actualizar mensajes", "UpdateMessages", new { id = Model.id }, "btn-button")
+        </div>
     </div>
-    <br />
-    <br />
+</div>
+<br />
+<br />
 <div class="container">
     @if (Model.messages.Any())
     {
