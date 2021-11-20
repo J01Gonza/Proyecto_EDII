@@ -178,7 +178,10 @@ namespace WEB.Controllers
                     int secretKey = DH.secretKey(chat.keys[2], chat.keys[3], chat.keys[1], chat.keys[0]);
                     for (int i = 0; i < chat.messages.Count(); i++)
                     {
-                        chat.messages[i].content = sdesEncode(chat.messages[i].content, sdesKeys(secretKey).key2, sdesKeys(secretKey).key1);
+                        if (chat.messages[i].content != null)
+                        {
+                            chat.messages[i].content = sdesEncode(chat.messages[i].content, sdesKeys(secretKey).key2, sdesKeys(secretKey).key1);
+                        }
                     }
                     returnm = chat;
                 }
@@ -240,7 +243,7 @@ namespace WEB.Controllers
                 UpdateUser(member);
             }
             UpdateUser(activeUser);
-            return RedirectToAction("Chat", new { id = HttpContext.Session.GetString(ActualChat), group = false });
+            return RedirectToAction("Chat", new { id = HttpContext.Session.GetString(ActualChat), group = Miembros.Length > 1 ? true : false });
         }
         public IActionResult Search(IFormCollection collection)
         {
@@ -314,7 +317,7 @@ namespace WEB.Controllers
             UpdateUser(actuser);
         }
 
-                [HttpPost]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult UploadFile(IFormFile file)
         {
@@ -336,8 +339,12 @@ namespace WEB.Controllers
                 {
                     file.CopyTo(fs);
                 }
-                lzw LZW = new lzw();
-                byte[] bytes = LZW.Compress(System.IO.File.ReadAllBytes(filePath));
+                byte[] bytes = System.IO.File.ReadAllBytes(filePath);
+                if (Path.GetExtension(filePath) == ".txt")
+                {
+                    lzw LZW = new lzw();
+                    bytes = LZW.Compress(bytes);
+                }
                 incoming.file.name = file.FileName;
                 incoming.file.bytes = bytes;
                 if (Miembros.Length > 1)
@@ -357,13 +364,22 @@ namespace WEB.Controllers
                 }
                 UpdateUser(activeUser);
             }
-            return RedirectToAction("Chat", new { id = HttpContext.Session.GetString(ActualChat), group = Miembros.Length > 1 ?true:false});
+            return RedirectToAction("Chat", new { id = HttpContext.Session.GetString(ActualChat), group = Miembros.Length > 1 ? true : false });
         }
 
-        //public FileResult DownloadFile()
-        //{
-        //    return File();
-        //}
+        public FileResult DownloadFile(int mID)
+        {
+            User actuser = UserbyName(HttpContext.Session.GetString(SessionUser));
+            Chats search = GetChat(HttpContext.Session.GetString(SessionUser), HttpContext.Session.GetString(ActualChat));
+            var file = actuser.chats[search.id].messages[mID].file;
+            if (file.name.Contains(".txt"))
+            {
+                lzw LZW = new lzw();
+                file.bytes = LZW.Compress(file.bytes);
+            }
+            return File(file.bytes, System.Net.Mime.MediaTypeNames.Application.Octet, file.name);
+        }
+
         private string UpdateUser(User upUser)
         {
             string p = upUser.id.ToString();
