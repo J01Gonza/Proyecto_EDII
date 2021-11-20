@@ -17,7 +17,7 @@ namespace WEB.Controllers
     {
         const string SessionUser = "_User";
         const string ActualChat = "_Chat";
-
+        const string GroupMembers = "_GMembers";
         private IHostingEnvironment Environment;
 
         public UserController(IHostingEnvironment _environment)
@@ -156,7 +156,8 @@ namespace WEB.Controllers
                         messages = new List<Messages>(),
                         group = false,
                         members = new List<string>(),
-                        keys = new List<char>()
+                        keys = new List<int>(),
+                        id = activeUser.chats.Count
                     };
                     int p = DH.pNumber();
                     int g = DH.gBase(p);
@@ -166,11 +167,10 @@ namespace WEB.Controllers
                     newChat.keys.Add((char)member.key);
                     newChat.members.Add(activeUser.userName);
                     newChat.members.Add(member.userName);
-                    newChat.id = activeUser.chats.Count;
                     activeUser.chats.Add(newChat);
+                    UpdateUser(activeUser);
                     newChat.id = member.chats.Count;
                     member.chats.Add(newChat);
-                    UpdateUser(activeUser);
                     UpdateUser(member);
                     returnm = newChat;
                 }
@@ -318,11 +318,34 @@ namespace WEB.Controllers
             UpdateUser(actuser);
         }
 
-        public IActionResult GroupChat()
+        public IActionResult GroupStart()
         {
-            return View(UserbyName(HttpContext.Session.GetString(SessionUser)));
+            if(HttpContext.Session.GetString(GroupMembers) == null)
+            {
+                HttpContext.Session.SetString(GroupMembers, "");
+            }
+            return View(HttpContext.Session.GetString(GroupMembers).Split(","));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult GroupStart(IFormCollection collection)
+        {
+            User act = UserbyName(HttpContext.Session.GetString(SessionUser));
+            if (act.contacts.Find(x => x.userContact == collection["userName"] && x.sent && x.received) != null)
+            {
+                if(HttpContext.Session.GetString(GroupMembers) != "")
+                {
+                    HttpContext.Session.SetString(GroupMembers, HttpContext.Session.GetString(GroupMembers) + "," + collection["userName"]);
+                }
+                else
+                {
+                    HttpContext.Session.SetString(GroupMembers, collection["userName"]);
+                }
+            }
+            string r = HttpContext.Session.GetString(GroupMembers);
+            return View(r.Split(","));
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult UploadFile(IFormFile file)
@@ -376,6 +399,22 @@ namespace WEB.Controllers
             return RedirectToAction("Chat", new { id = HttpContext.Session.GetString(ActualChat), group = Miembros.Length > 1 ? true : false });
         }
 
+        public IActionResult UpdateMessages(int id)
+        {
+            string miembros = "";
+            for (int i = 0; i < UserbyName(HttpContext.Session.GetString(SessionUser)).chats[id].members.Count; i++)
+            {
+                if(UserbyName(HttpContext.Session.GetString(SessionUser)).chats[id].members[i] != HttpContext.Session.GetString(SessionUser))
+                {
+                    miembros += UserbyName(HttpContext.Session.GetString(SessionUser)).chats[id].members[i];
+                    if(i != UserbyName(HttpContext.Session.GetString(SessionUser)).chats[id].members.Count - 1 || UserbyName(HttpContext.Session.GetString(SessionUser)).chats[id].members.Count == 2)
+                    {
+                        miembros += ", ";
+                    }
+                }
+            }
+            return RedirectToAction("Chat", new { id = miembros, group = UserbyName(HttpContext.Session.GetString(SessionUser)).chats[id].group });
+        }
         public FileResult DownloadFile(int mID)
         {
             User actuser = UserbyName(HttpContext.Session.GetString(SessionUser));

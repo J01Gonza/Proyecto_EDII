@@ -48,12 +48,12 @@ namespace WEB.Controllers
         {
             try
             {
-                var ingreso = GlobalVariables.webClient.GetAsync("User/AllUsers").Result;
+                string uri = "User/UserbyUN/" + collection["userName"];
+                var ingreso = GlobalVariables.webClient.GetAsync(uri).Result;
                 if (ingreso != null && ingreso.IsSuccessStatusCode)
                 {
                     string p = await ingreso.Content.ReadAsStringAsync();
-                    List<User> allusers = JsonConvert.DeserializeObject<List<User>>(p);
-                    User sessionUser = allusers.Find(x => x.userName == collection["userName"]);
+                    User sessionUser = JsonConvert.DeserializeObject<User>(p);
                     var k = sdesKeys(sessionUser.key);
                     string password = sdesEncode(sessionUser.password, k.key2, k.key1);
                     if (password == collection["password"])
@@ -108,7 +108,7 @@ namespace WEB.Controllers
                 }
                 else
                 {
-                    ViewData["Error"] = ans.ReasonPhrase;
+                    ViewData["Error"] = "Oh no! parece que otro viajero se ha registrado bajo el mismo nombre, intenta con otro usuario";
                     return View();
                 }
             }

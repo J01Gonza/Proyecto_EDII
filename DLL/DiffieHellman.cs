@@ -18,6 +18,8 @@ namespace DLL
     {
         public int secretKey(int key1, int key2, int g, int p)
         {
+            key1 = key1 % 256;
+            key2 = key2 % 256;
             return (int)BigInteger.ModPow(g, key1 * key2, p);
         }
 
