@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using WEB.Models;
 using DLL;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace WEB.Controllers
 {
@@ -15,6 +17,14 @@ namespace WEB.Controllers
     {
         const string SessionUser = "_User";
         const string ActualChat = "_Chat";
+
+        private IHostingEnvironment Environment;
+
+        public UserController(IHostingEnvironment _environment)
+        {
+            Environment = _environment;
+        }
+
         public IActionResult Index()
         {
             User user = UserbyName(HttpContext.Session.GetString(SessionUser));
@@ -197,7 +207,7 @@ namespace WEB.Controllers
             User activeUser = UserbyName(HttpContext.Session.GetString(SessionUser));
             var Miembros = HttpContext.Session.GetString(ActualChat).Split(",");
             Chats actualChat = new Chats();
-            if (Miembros.Length >1)
+            if (Miembros.Length > 1)
             {
                 actualChat = activeUser.chats.Find(x => !x.members.Except(Miembros).Any() && x.members.Count == Miembros.Length + 1);
                 int pos = activeUser.chats.IndexOf(actualChat);
@@ -228,6 +238,56 @@ namespace WEB.Controllers
             UpdateUser(activeUser);
             return View(actualChat);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UploadFile(IFormFile file)
+        {
+            User activeUser = UserbyName(HttpContext.Session.GetString(SessionUser));
+            Messages incoming = new Messages();
+            Chats actualChat = new Chats();
+            if (file != null)
+            {
+                string path = Path.Combine(this.Environment.WebRootPath, "Uploads");
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                string fileName = Path.GetFileName(file.FileName);
+                string filePath = Path.Combine(path, fileName);
+                using (FileStream fs = new FileStream(filePath, FileMode.Create))
+                {
+                    file.CopyTo(fs);
+                }
+                lzw LZW = new lzw();
+                byte[] bytes = LZW.Compress(System.IO.File.ReadAllBytes(filePath));
+                incoming.file.name = file.FileName;
+                incoming.file.bytes = bytes;
+                var Miembros = HttpContext.Session.GetString(ActualChat).Split(",");
+                if (Miembros.Length > 1)
+                {
+
+                }
+                else
+                {
+                    User member = UserbyName(HttpContext.Session.GetString(ActualChat));
+                    actualChat = activeUser.chats.Find(x => x.members.Contains(HttpContext.Session.GetString(ActualChat)) && x.members.Count == 2);
+                    int posactualuser = activeUser.chats.IndexOf(actualChat);
+                    actualChat = member.chats.Find(x => x.members.Contains(activeUser.userName) && x.members.Count == 2);
+                    int posmember = member.chats.IndexOf(actualChat);
+                    activeUser.chats[posactualuser].messages.Add(incoming);
+                    member.chats[posmember].messages.Add(incoming);
+                    UpdateUser(member);
+                }
+                UpdateUser(activeUser);
+            }
+            return RedirectToAction("Chat", actualChat);
+        }
+
+        //public FileResult DownloadFile()
+        //{
+        //    return File();
+        //}
     
         private string UpdateUser(User upUser)
         {
