@@ -330,6 +330,7 @@ namespace WEB.Controllers
             User activeUser = UserbyName(HttpContext.Session.GetString(SessionUser));
             Messages incoming = new Messages();
             incoming.file = new WEB.Models.File();
+            incoming.sender = activeUser.userName;
             Chats actualChat = new Chats();
             var Miembros = HttpContext.Session.GetString(ActualChat).Split(",");
             if (file != null)
@@ -362,9 +363,11 @@ namespace WEB.Controllers
                     User member = UserbyName(HttpContext.Session.GetString(ActualChat));
                     actualChat = activeUser.chats.Find(x => x.members.Contains(HttpContext.Session.GetString(ActualChat)) && x.members.Count == 2);
                     int posactualuser = activeUser.chats.IndexOf(actualChat);
+                    incoming.id = activeUser.chats[posactualuser].messages.Count();
                     actualChat = member.chats.Find(x => x.members.Contains(activeUser.userName) && x.members.Count == 2);
-                    int posmember = member.chats.IndexOf(actualChat);
                     activeUser.chats[posactualuser].messages.Add(incoming);
+                    int posmember = member.chats.IndexOf(actualChat);
+                    incoming.id = member.chats[posmember].messages.Count();
                     member.chats[posmember].messages.Add(incoming);
                     UpdateUser(member);
                 }

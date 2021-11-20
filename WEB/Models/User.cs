@@ -29,5 +29,6 @@ namespace WEB.Models
         public List<Chats> chats { get; set; }
         public List<Contact> contacts { get; set; }
         public int key { get; set; }
+        public string contactSelected { get; set; }
     }
 }
