@@ -34,15 +34,25 @@
             <tbody>
                 @foreach (var item in Model.messages)
                 {
+                    if (item != null)
+                    {
                     <tr>
                         <td>
                             <b>@item.sender:</b>
-                            <br /> @item.content
+                            @if(item.content != null)
+                            {
+                                <br /> @item.content
+                            }
+                            else
+                            {
+
+                            }
                         </td>
                         <td class="align-middle">
-                        @Html.ActionLink("Borrar para todos", "DeleteForAll", new { mID = item.id }) | @Html.ActionLink("Borrar para mí", "DeleteForMe", new{mID = item.id })
+                        @Html.ActionLink("Borrar para todos", "DeleteForAll", new { mID = item.id }) | @Html.ActionLink("Borrar para mí", "DeleteForMe", new { mID = item.id })
                         </td>
                     </tr>
+                    }
                 }
             </tbody>
         </table>

@@ -153,7 +153,6 @@ namespace WEB.Controllers
                 {
                     Chats newChat = new Chats()
                     {
-                        id = 1,
                         messages = new List<Messages>(),
                         group = false,
                         members = new List<string>(),
@@ -167,7 +166,9 @@ namespace WEB.Controllers
                     newChat.keys.Add((char)member.key);
                     newChat.members.Add(activeUser.userName);
                     newChat.members.Add(member.userName);
+                    newChat.id = activeUser.chats.Count;
                     activeUser.chats.Add(newChat);
+                    newChat.id = member.chats.Count;
                     member.chats.Add(newChat);
                     UpdateUser(activeUser);
                     UpdateUser(member);
@@ -278,35 +279,31 @@ namespace WEB.Controllers
 
         public IActionResult DeleteForMe(int mID)
         {
-            User actuser = UserbyName(HttpContext.Session.GetString(SessionUser));
-            Chats search = GetChat(HttpContext.Session.GetString(SessionUser), HttpContext.Session.GetString(ActualChat));
-            actuser.chats[search.id].messages[mID] = null;
-            UpdateUser(actuser);
-            return RedirectToAction("Chat", new { id = HttpContext.Session.GetString(ActualChat), group = search.group });
+            Delete(HttpContext.Session.GetString(SessionUser), HttpContext.Session.GetString(ActualChat), mID);
+            return RedirectToAction("Chat", new { id = HttpContext.Session.GetString(ActualChat), group = HttpContext.Session.GetString(ActualChat).Split(",").Length > 1 ? true : false });
         }
 
         public IActionResult DeleteForAll(int mID)
         {
-            User actuser = UserbyName(HttpContext.Session.GetString(SessionUser));
-            Chats search = GetChat(HttpContext.Session.GetString(SessionUser), HttpContext.Session.GetString(ActualChat));
-            actuser.chats[search.id].messages.RemoveAt(mID);
-            for (int i = 0; i < actuser.chats[search.id].messages.Count; i++)
+            Delete(HttpContext.Session.GetString(SessionUser), HttpContext.Session.GetString(ActualChat), mID);
+            var Miembros = HttpContext.Session.GetString(ActualChat).Split(",");
+            string repm = "";
+            for (int i = 0; i < Miembros.Length; i++)
             {
-                actuser.chats[search.id].messages[i].id = i;
+                string user = Miembros[i];
+                var replaceMiembros = Miembros;
+                replaceMiembros[i] = HttpContext.Session.GetString(SessionUser);
+                for (int j = 0; j < replaceMiembros.Length; j++)
+                {
+                    repm += replaceMiembros[j];
+                    if(j != replaceMiembros.Length - 1)
+                    {
+                        repm += ",";
+                    }
+                }
+                Delete(user, repm, mID);
             }
-            UpdateUser(actuser);
-            //for (int i = 0; i < Miembros.Length; i++)
-            //{
-            //    User member = UserbyName(Miembros[i]);
-            //    int pos = member.chats.IndexOf(search);
-            //    member.chats[pos].messages.RemoveAt(mID);
-            //    for (int j = 0; j < member.chats[search.id].messages.Count; j++)
-            //    {
-            //        member.chats[search.id].messages[j].id = j;
-            //    }
-            //    UpdateUser(member);
-            //}
-            return RedirectToAction("Chat", new { id = HttpContext.Session.GetString(ActualChat), group = search.group });
+            return RedirectToAction("Chat", new { id = HttpContext.Session.GetString(ActualChat), group = Miembros.Length > 1 ? true : false });
         }
 
         private void Delete(string User1, string User2, int id)
@@ -315,6 +312,11 @@ namespace WEB.Controllers
             Chats search = GetChat(User1, User2);
             actuser.chats[search.id].messages[id] = null;
             UpdateUser(actuser);
+        }
+
+        public IActionResult GroupChat()
+        {
+            return View(UserbyName(HttpContext.Session.GetString(SessionUser)));
         }
 
         [HttpPost]
