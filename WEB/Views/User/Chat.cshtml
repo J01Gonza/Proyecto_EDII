@@ -15,11 +15,10 @@
         </div>
     </form>
     <br/>
-    <div class="row">
-        <div class="col-sm-2">
-            <input type="submit" name="File" value="Adjuntar archivos" class="btn btn-primary" />
-        </div>
-    </div>
+    <form asp-action="UploadFile" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" />
+        <input type="submit" value="Import" />
+    </form>
     <br />
     <br />
     @if (Model.messages.Any())
