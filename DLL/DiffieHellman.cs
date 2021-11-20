@@ -24,7 +24,7 @@ namespace DLL
         public int gBase()
         {
             Random random = new Random();
-            return random.Next(255, 2);
+            return random.Next(2, 255);
         }
 
         public int pNumber()

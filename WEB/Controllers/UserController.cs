@@ -143,6 +143,7 @@ namespace WEB.Controllers
                 {
                     Chats newChat = new Chats()
                     {
+                        id = 1,
                         messages = new List<Messages>(),
                         group = false,
                         members = new List<string>(),
@@ -167,7 +168,7 @@ namespace WEB.Controllers
                     int secretKey = DH.secretKey(chat.keys[2], chat.keys[3], chat.keys[1], chat.keys[0]);
                     for (int i = 0; i < chat.messages.Count(); i++)
                     {
-                        chat.messages[i].content = sdesEncode(chat.messages[i].content, sdesKeys(secretKey).key2, sdesKeys(secretKey).key2);
+                        chat.messages[i].content = sdesEncode(chat.messages[i].content, sdesKeys(secretKey).key2, sdesKeys(secretKey).key1);
                     }
                     returnm = chat;
                 }
@@ -178,7 +179,7 @@ namespace WEB.Controllers
                 List<Chats> groups = activeUser.chats.FindAll(x => x.group == true);
                 foreach (var g in groups)
                 {
-                    if (!g.members.Except(members.ToList()).Any() && g.members.Count == members.Length)
+                    if (!g.members.Except(members.ToList()).Any() && g.members.Count == members.Length + 1)
                     {
                         returnm = g;
                     }
@@ -198,7 +199,7 @@ namespace WEB.Controllers
             User activeUser = UserbyName(HttpContext.Session.GetString(SessionUser));
             var Miembros = HttpContext.Session.GetString(ActualChat).Split(",");
             Chats actualChat = new Chats();
-            if (Miembros.Length >1)
+            if (Miembros.Length > 1)
             {
                 actualChat = activeUser.chats.Find(x => !x.members.Except(Miembros).Any() && x.members.Count == Miembros.Length + 1);
                 int pos = activeUser.chats.IndexOf(actualChat);
@@ -222,36 +223,85 @@ namespace WEB.Controllers
                 int posactualuser = activeUser.chats.IndexOf(actualChat);
                 actualChat = member.chats.Find(x => x.members.Contains(activeUser.userName) && x.members.Count == 2);
                 int posmember = member.chats.IndexOf(actualChat);
+                incoming.id = activeUser.chats[posactualuser].messages.Count();
                 activeUser.chats[posactualuser].messages.Add(incoming);
+                incoming.id = member.chats[posmember].messages.Count();
                 member.chats[posmember].messages.Add(incoming);
                 UpdateUser(member);
             }
             UpdateUser(activeUser);
-            return View(actualChat);
+            return RedirectToAction("Chat", new { id = HttpContext.Session.GetString(ActualChat), group = false });
         }
-
-        public IActionResult SearchMessages(Chats search)
+        public IActionResult Search(IFormCollection collection)
         {
-            string miembros = "";
-            foreach(var m in search.members)
+            diffiehellman DH = new diffiehellman();
+            User actuser = UserbyName(HttpContext.Session.GetString(SessionUser));
+            var Miembros = HttpContext.Session.GetString(ActualChat).Split(",");
+            Chats search = new Chats();
+            if (Miembros.Length > 1)
             {
-                if(m != HttpContext.Session.GetString(SessionUser))
+                //busqueda grupal
+                List<Chats> groups = actuser.chats.FindAll(x => x.group == true);
+                foreach (var g in groups)
                 {
-                    miembros += m;
-                    if(m != search.members.Last() && !search.group)
+                    if (!g.members.Except(Miembros).Any() && g.members.Count == Miembros.Length + 1)
                     {
-                        miembros += ", ";
+                        search = g;
                     }
                 }
             }
-            ViewData["user"] = miembros;
+            else
+            {
+                search = actuser.chats.Find(x => x.members[0] == HttpContext.Session.GetString(ActualChat));
+            }
+            int secretKey = DH.secretKey(search.keys[2], search.keys[3], search.keys[1], search.keys[0]);
+            for (int i = 0; i < search.messages.Count(); i++)
+            {
+                search.messages[i].content = sdesEncode(search.messages[i].content, sdesKeys(secretKey).key2, sdesKeys(secretKey).key1);
+            }
+            search.messages = search.messages.FindAll(x => x.content.Contains(collection["Contenido"]));
             return View(search);
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult SearchMessages()
+
+        public IActionResult DeleteForMe(int mID)
         {
-            return View();
+            User actuser = UserbyName(HttpContext.Session.GetString(SessionUser));
+            Chats search = GetChat(HttpContext.Session.GetString(SessionUser), HttpContext.Session.GetString(ActualChat));
+            actuser.chats[search.id].messages[mID] = null;
+            UpdateUser(actuser);
+            return RedirectToAction("Chat", new { id = HttpContext.Session.GetString(ActualChat), group = search.group });
+        }
+
+        public IActionResult DeleteForAll(int mID)
+        {
+            User actuser = UserbyName(HttpContext.Session.GetString(SessionUser));
+            Chats search = GetChat(HttpContext.Session.GetString(SessionUser), HttpContext.Session.GetString(ActualChat));
+            actuser.chats[search.id].messages.RemoveAt(mID);
+            for (int i = 0; i < actuser.chats[search.id].messages.Count; i++)
+            {
+                actuser.chats[search.id].messages[i].id = i;
+            }
+            UpdateUser(actuser);
+            for (int i = 0; i < Miembros.Length; i++)
+            {
+                User member = UserbyName(Miembros[i]);
+                int pos = member.chats.IndexOf(search);
+                member.chats[pos].messages.RemoveAt(mID);
+                for (int j = 0; j < member.chats[search.id].messages.Count; j++)
+                {
+                    member.chats[search.id].messages[j].id = j;
+                }
+                UpdateUser(member);
+            }
+            return RedirectToAction("Chat", new { id = HttpContext.Session.GetString(ActualChat), group = search.group });
+        }
+
+        private void Delete(string User1, string User2, int id)
+        {
+            User actuser = UserbyName(User1);
+            Chats search = GetChat(User1, User2);
+            actuser.chats[search.id].messages[id] = null;
+            UpdateUser(actuser);
         }
         private string UpdateUser(User upUser)
         {
@@ -276,6 +326,29 @@ namespace WEB.Controllers
             List<User> allusers = System.Text.Json.JsonSerializer.Deserialize<List<User>>(ingreso.Content.ReadAsStringAsync().Result);
             User sessionUser = allusers.Find(x => x.userName == user);
             return sessionUser;
+        }
+
+        private Chats GetChat(string UserBase, string UserSearch)
+        {
+            User actuser = UserbyName(UserBase);
+            var Miembros = UserSearch.Split(",");
+            if (Miembros.Length > 1)
+            {
+                //busqueda grupal
+                List<Chats> groups = actuser.chats.FindAll(x => x.group == true);
+                foreach (var g in groups)
+                {
+                    if (!g.members.Except(Miembros).Any() && g.members.Count == Miembros.Length + 1)
+                    {
+                        return g;
+                    }
+                }
+            }
+            else
+            {
+                return actuser.chats.Find(x => x.members.Contains(HttpContext.Session.GetString(ActualChat)) && x.members.Count == 2);
+            }
+            return null;
         }
 
         public (string key1, string key2) sdesKeys(int key)

@@ -15,10 +15,19 @@
         </div>
     </form>
     <br/>
+
     <div class="row">
-        <div class="col-sm-2">
-            <input type="submit" name="File" value="Adjuntar archivos" class="btn btn-primary" />
-        </div>
+        <form class="col-sm-2"asp-action="Upload">
+            <div >
+                <input type="submit" name="File" value="Adjuntar archivos" class="btn btn-primary" />
+            </div>
+        </form>
+        <form class="col-sm-10 row"asp-action="Search">
+            <div class="col-sm-8">
+                <input type="submit" name="Search" value="Buscar mensajes" class="btn btn-primary" />
+                <input type="text" name="Contenido" class="form-control" />
+            </div>
+        </form>
     </div>
     <br />
     <br />
@@ -34,7 +43,7 @@
                             <br /> @item.content
                         </td>
                         <td class="align-middle">
-                        @Html.ActionLink("Borrar para todos", "Delete") | @Html.ActionLink("Borrar para mí", "Delete")
+                        @Html.ActionLink("Borrar para todos", "DeleteForAll", new { mID = item.id }) | @Html.ActionLink("Borrar para mí", "DeleteForMe", new{mID = item.id })
                         </td>
                     </tr>
                 }

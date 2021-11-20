@@ -8,6 +8,7 @@ namespace WEB.Models
 {
     public class Messages
     {
+        public int id { get; set; }
         public string content { get; set; }
         public string sender { get; set; }
         public IFormFile file { get; set; }
