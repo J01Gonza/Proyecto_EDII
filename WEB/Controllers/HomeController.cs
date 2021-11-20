@@ -19,6 +19,7 @@ namespace WEB.Controllers
         private readonly ILogger<HomeController> _logger;
         const string SessionUser = "_User";
 
+        
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
@@ -88,28 +89,35 @@ namespace WEB.Controllers
             try
             {
                 var k = sdesKeys(collection["Name"].GetHashCode() % 256);
-                string password = sdesEncode(collection["password"], k.key1, k.key2);
-                var newUser = new User()
+                if(collection["password"] != "" || collection["userName"] != "" || collection["LName"] != "")
                 {
-                    userName = collection["userName"],
-                    password = password,
-                    name = collection["Name"],
-                    lName = collection["LName"],
-                    contacts = new List<Contact>(),
-                    chats = new List<Chats>(),
-                    key = collection["Name"].GetHashCode() % 256
-                };
-                string json = System.Text.Json.JsonSerializer.Serialize(newUser);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                HttpResponseMessage ans = GlobalVariables.webClient.PostAsync("User/SignUp", content).Result;
-                if (ans.IsSuccessStatusCode)
-                {
-                    return RedirectToAction("Index");
+                    string password = sdesEncode(collection["password"], k.key1, k.key2);
+                    var newUser = new User()
+                    {
+                        userName = collection["userName"],
+                        password = password,
+                        name = collection["Name"],
+                        lName = collection["LName"],
+                        contacts = new List<Contact>(),
+                        chats = new List<Chats>(),
+                        key = collection["Name"].GetHashCode() % 256
+                    };
+                    string json = System.Text.Json.JsonSerializer.Serialize(newUser);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    HttpResponseMessage ans = GlobalVariables.webClient.PostAsync("User/SignUp", content).Result;
+                    if (ans.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        ViewData["Error"] = "Oh no! parece que otro viajero se ha registrado bajo el mismo nombre, intenta con otro usuario";
+                        return View();
+                    }
                 }
                 else
                 {
-                    ViewData["Error"] = "Oh no! parece que otro viajero se ha registrado bajo el mismo nombre, intenta con otro usuario";
-                    return View();
+                    throw new Exception();
                 }
             }
             catch (Exception e)

@@ -50,7 +50,7 @@
                             <p>@miembros</p>
                         </td>
                         <td>
-                            <pre>@Html.ActionLink("Abrir chat", "Chat", new { id = miembros})</pre>
+                            <pre>@Html.ActionLink("Abrir chat", "Chat", new { id = miembros, group = item.group})</pre>
                         </td>
                     </tr>
                 }

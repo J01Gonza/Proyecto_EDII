@@ -141,11 +141,14 @@ namespace WEB.Controllers
 
         public IActionResult Chat(string id, bool group)
         {
-            ViewData["users"] = id;
             User activeUser = UserbyName(HttpContext.Session.GetString(SessionUser));
             Chats returnm = new Chats();
             if (!group)
             {
+                int pcoma = id.IndexOf(",");
+                if (pcoma == 0) id = id.Substring(1, id.Length);
+                if (pcoma != -1) id = id.Substring(0, pcoma);
+                ViewData["users"] = id;
                 diffiehellman DH = new diffiehellman();
                 User member = UserbyName(id);
                 Chats chat = activeUser.chats.Find(x => x.members.Count == 2 && x.members.Contains(id));
@@ -176,6 +179,7 @@ namespace WEB.Controllers
                 }
                 else
                 {
+
                     int secretKey = DH.secretKey(chat.keys[2], chat.keys[3], chat.keys[1], chat.keys[0]);
                     for (int i = 0; i < chat.messages.Count(); i++)
                     {
@@ -193,11 +197,15 @@ namespace WEB.Controllers
             }
             else
             {
+                ViewData["users"] = id;
                 var members = id.Split(",");
+                List<string> x = members.ToList();
+                x.Remove("");
+                members = x.ToArray();
                 List<Chats> groups = activeUser.chats.FindAll(x => x.group == true);
                 foreach (var g in groups)
                 {
-                    if (!g.members.Except(members.ToList()).Any() && g.members.Count == members.Length + 1)
+                    if (g.members.Except(members.ToList()).Any() && g.members.Count == members.Length + 1)
                     {
                         returnm = g;
                     }
@@ -219,13 +227,16 @@ namespace WEB.Controllers
             Chats actualChat = new Chats();
             if (Miembros.Length > 1)
             {
-                actualChat = activeUser.chats.Find(x => !x.members.Except(Miembros).Any() && x.members.Count == Miembros.Length + 1);
+                List<string> x = Miembros.ToList();
+                x.Remove("");
+                Miembros = x.ToArray();
+                actualChat = activeUser.chats.Find(x => x.members.Except(Miembros).Any() && x.members.Count == Miembros.Length + 1);
                 int pos = activeUser.chats.IndexOf(actualChat);
                 activeUser.chats[pos].messages.Add(incoming);
-                foreach (var integrante in ActualChat.Split(","))
+                foreach (var integrante in Miembros)
                 {
                     User member = UserbyName(integrante);
-                    actualChat = member.chats.Find(x => !x.members.Except(Miembros).Any() && x.members.Count == Miembros.Length + 1 && x.members.Contains(activeUser.userName));
+                    actualChat = member.chats.Find(x => x.members.Except(Miembros).Any() && x.members.Count == Miembros.Length + 1 && x.members.Contains(activeUser.userName));
                     pos = member.chats.IndexOf(actualChat);
                     member.chats[pos].messages.Add(incoming);
                     UpdateUser(member);
@@ -270,7 +281,7 @@ namespace WEB.Controllers
             }
             else
             {
-                search = actuser.chats.Find(x => x.members[0] == HttpContext.Session.GetString(ActualChat));
+                search = actuser.chats.Find(x => x.members.Contains(HttpContext.Session.GetString(ActualChat)));
             }
             int secretKey = DH.secretKey(search.keys[2], search.keys[3], search.keys[1], search.keys[0]);
             for (int i = 0; i < search.messages.Count(); i++)
@@ -368,6 +379,7 @@ namespace WEB.Controllers
                     members = new List<string>(),
                     keys = new List<int>()
                 };
+                ChatGroup.id = act.chats.Count;
                 ChatGroup.members.Add(act.userName);
                 act.chats.Add(ChatGroup);
                 foreach(var miembro in members)
@@ -381,7 +393,6 @@ namespace WEB.Controllers
                     mem.chats.Add(ChatGroup);
                     UpdateUser(mem);
                 }
-                ChatGroup.id = act.chats.Count;
                 UpdateUser(act);
             }
             return RedirectToAction("Index");
@@ -419,7 +430,20 @@ namespace WEB.Controllers
                 incoming.file.bytes = bytes;
                 if (Miembros.Length > 1)
                 {
-
+                    List<string> x = Miembros.ToList();
+                    x.Remove("");
+                    Miembros = x.ToArray();
+                    actualChat = activeUser.chats.Find(x => x.members.Except(Miembros).Any() && x.members.Count == Miembros.Length + 1);
+                    int pos = activeUser.chats.IndexOf(actualChat);
+                    activeUser.chats[pos].messages.Add(incoming);
+                    foreach (var integrante in Miembros)
+                    {
+                        User member = UserbyName(integrante);
+                        actualChat = member.chats.Find(x => x.members.Except(Miembros).Any() && x.members.Count == Miembros.Length + 1 && x.members.Contains(activeUser.userName));
+                        pos = member.chats.IndexOf(actualChat);
+                        member.chats[pos].messages.Add(incoming);
+                        UpdateUser(member);
+                    }
                 }
                 else
                 {
@@ -499,11 +523,13 @@ namespace WEB.Controllers
             var Miembros = UserSearch.Split(",");
             if (Miembros.Length > 1)
             {
-                //busqueda grupal
+                List<string> x = Miembros.ToList();
+                x.Remove("");
+                Miembros = x.ToArray();
                 List<Chats> groups = actuser.chats.FindAll(x => x.group == true);
                 foreach (var g in groups)
                 {
-                    if (!g.members.Except(Miembros).Any() && g.members.Count == Miembros.Length + 1)
+                    if (g.members.Except(Miembros).Any() && g.members.Count == Miembros.Length + 1)
                     {
                         return g;
                     }
