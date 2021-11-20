@@ -292,17 +292,17 @@ namespace WEB.Controllers
                 actuser.chats[search.id].messages[i].id = i;
             }
             UpdateUser(actuser);
-            for (int i = 0; i < Miembros.Length; i++)
-            {
-                User member = UserbyName(Miembros[i]);
-                int pos = member.chats.IndexOf(search);
-                member.chats[pos].messages.RemoveAt(mID);
-                for (int j = 0; j < member.chats[search.id].messages.Count; j++)
-                {
-                    member.chats[search.id].messages[j].id = j;
-                }
-                UpdateUser(member);
-            }
+            //for (int i = 0; i < Miembros.Length; i++)
+            //{
+            //    User member = UserbyName(Miembros[i]);
+            //    int pos = member.chats.IndexOf(search);
+            //    member.chats[pos].messages.RemoveAt(mID);
+            //    for (int j = 0; j < member.chats[search.id].messages.Count; j++)
+            //    {
+            //        member.chats[search.id].messages[j].id = j;
+            //    }
+            //    UpdateUser(member);
+            //}
             return RedirectToAction("Chat", new { id = HttpContext.Session.GetString(ActualChat), group = search.group });
         }
 
@@ -320,7 +320,9 @@ namespace WEB.Controllers
         {
             User activeUser = UserbyName(HttpContext.Session.GetString(SessionUser));
             Messages incoming = new Messages();
+            incoming.file = new WEB.Models.File();
             Chats actualChat = new Chats();
+            var Miembros = HttpContext.Session.GetString(ActualChat).Split(",");
             if (file != null)
             {
                 string path = Path.Combine(this.Environment.WebRootPath, "Uploads");
@@ -338,7 +340,6 @@ namespace WEB.Controllers
                 byte[] bytes = LZW.Compress(System.IO.File.ReadAllBytes(filePath));
                 incoming.file.name = file.FileName;
                 incoming.file.bytes = bytes;
-                var Miembros = HttpContext.Session.GetString(ActualChat).Split(",");
                 if (Miembros.Length > 1)
                 {
 
@@ -356,7 +357,7 @@ namespace WEB.Controllers
                 }
                 UpdateUser(activeUser);
             }
-            return RedirectToAction("Chat", actualChat);
+            return RedirectToAction("Chat", new { id = HttpContext.Session.GetString(ActualChat), group = Miembros.Length > 1 ?true:false});
         }
 
         //public FileResult DownloadFile()
