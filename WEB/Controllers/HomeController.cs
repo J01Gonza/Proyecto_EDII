@@ -109,7 +109,7 @@ namespace WEB.Controllers
                 else
                 {
                     ViewData["Error"] = ans.ReasonPhrase;
-                    return RedirectToAction("Index");
+                    return View();
                 }
             }
             catch (Exception e)
